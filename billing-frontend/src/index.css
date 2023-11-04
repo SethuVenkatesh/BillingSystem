@@ -15,3 +15,60 @@ input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   appearance: none;
 }
+
+
+/* Loader  */
+.loader{
+  width: 50px;
+  height: 50px;
+  border-radius: 100%;
+  position: relative;
+  margin: 0 auto;
+  border: 5px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.loader::before{
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  width: 50px;
+  height: 50px;
+  z-index: 10;
+  border-radius: 100%;
+  border: 7px solid transparent;
+  border-top-color: #3498db;
+}
+
+.loader::before{
+  z-index: 100;
+  animation: rotate 1s linear infinite;
+}
+
+
+@keyframes rotate{
+  0%{
+    transform:translate(-50%,-50%) rotate(0deg);
+  }
+  100%{
+    transform:translate(-50%,-50%) rotate(360deg);
+  }
+}
+
+.toast-animation{
+  animation: toast 5000ms linear infinite;
+}
+
+@keyframes toast {
+  0%{
+      width: 100%;
+  }
+  100%{
+      width: 0%;
+  }
+}

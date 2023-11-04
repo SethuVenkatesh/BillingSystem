@@ -3,9 +3,9 @@ const mongoose = require("mongoose");
 const companySchema = new mongoose.Schema({
   company_name: {
     type: String,
-    required: true,
+    required:true,
   },
-  logo:{
+  logo_url:{
     type:String,
     required:true,
   },
@@ -15,15 +15,15 @@ const companySchema = new mongoose.Schema({
   },
   city:{
     type:String,
-    required :true,
+    required:true,
   },
   state:{
     type:String,
-    required :true,
+    required:true,
   },
   pincode:{
     type:Number,
-    required :true,
+    required:true,
   },
   mobile_number:{
     type:Number,
@@ -34,9 +34,8 @@ const companySchema = new mongoose.Schema({
     required:true,
   },
   GST_number: {
-    type: Number,
-    default: 0,
-    required:true,
+    type: String,  
+    required:true,  
   },
   bank_name:{
     type:String,
