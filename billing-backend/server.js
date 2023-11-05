@@ -55,6 +55,21 @@ app.get("/company/:id",async (request,response)=>{
     }
 })
 
+app.put("/company/:id",async (request,response)=>{
+    try{
+        let companyId=request.params.id
+        let companyDetail = request.body.companyData;
+        const updatedcompany=await company.findByIdAndUpdate(
+            companyId,
+            companyDetail,
+            {new: true},
+        );
+        response.status(200).send(updatedcompany)
+    }catch(e){
+        console.log(e);
+        response.status(400).send("error in updating company")
+    }
+})
 
 app.delete("/company/:id",async (request,response)=>{
     try{
