@@ -5,10 +5,10 @@ import Loader from '../../components/common/Loader';
 import { companyDetailsParams,bankDetailsParams } from '../../constants';
 import { useState,useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-
+import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
 
-const UpdateCompany = ({props}) => {
+const UpdateCompany = () => {
 
     const [loading,setLoading]=useState(false);
     const [toastMsg,setToastMsg] =useState("");
@@ -28,28 +28,36 @@ const UpdateCompany = ({props}) => {
         account_number:"",
         IFSC_code:""
     });
-    const [uploadFile, setUploadFile] = useState("");
+    const [uploadFile, setUploadFile] = useState(null);
 
     const handleImageUpload = () => {
         setLoading(true)
         let isSucess = handleValidate();
         if(isSucess){
-        const formData = new FormData ();
-        formData.append("file", uploadFile);
-        formData.append("upload_preset", "ruwqs5az");
-        axios.post(
-         "https://api.cloudinary.com/v1_1/dkjcfh7oj/image/upload",
-         formData
-       )
-        .then((response) => {
-          let companyData={...companyDetails,logo_url:response.data.secure_url}
-          setCompanyDetails({...companyDetails,logo_url:response.data.secure_url})
-          updateCompany(companyData)
-        })
-        .catch((error) => {
-          console.log(error);
-          setLoading(false);
-        });
+           console.log(uploadFile)
+            if(uploadFile){
+                console.log("image upload")
+                const formData = new FormData ();
+                formData.append("file", uploadFile);
+                formData.append("upload_preset", "ruwqs5az");
+                axios.post(
+                "https://api.cloudinary.com/v1_1/dkjcfh7oj/image/upload",
+                formData
+                )
+                .then((response) => {
+                let companyData={...companyDetails,logo_url:response.data.secure_url}
+                setCompanyDetails({...companyDetails,logo_url:response.data.secure_url})
+                updateCompany(companyData)
+                })
+                .catch((error) => {
+                console.log(error);
+                setLoading(false);
+                });
+            }
+            else{
+                console.log("image upload no")
+                updateCompany(companyDetails)
+            }
         }
       };
 
@@ -75,23 +83,31 @@ const UpdateCompany = ({props}) => {
                 return;
             }
         }
-
         if(!valSuccess) return false;
-        if(uploadFile.length == 0){
+        console.log(uploadFile)
+        if(companyDetails.logo_url.length == 0 &&  uploadFile == null){
             setLoading(false);
-            setToastMsg("company logo is required")
+            setToastMsg("Company Logo is required")
+            return false;
         }
         return true;
       }
 
-      const updateCompany= (companyData)=>{
-        axios.put("http://localhost:4000/company/edit",{companyData}).then((res)=>{
+    const updateCompany= (companyData)=>{
+        axios.put(`http://localhost:4000/company/${companyId}`,{companyData}).then((res)=>{
             console.log(res)
             setLoading(false);
+            setUploadFile(null)
         }).catch((err)=>{
+            setLoading(false)
             console.log(err)
         })
-      }
+    }
+
+    const handleLogoDelete=()=>{
+        setCompanyDetails({...companyDetails,logo_url:""});
+    }
+
 
   useEffect(()=>{
     console.log(companyId)
@@ -111,6 +127,15 @@ const UpdateCompany = ({props}) => {
             <p className='font-semibold text-blue-700 text-md min-w-fit'>Company Details</p>
             <p className='border border-blue-800 w-full'></p>        
         </div>
+        {
+            companyDetails.logo_url.length > 0 &&
+            <div className='mb-4 relative'>
+                <img src={companyDetails.logo_url} className='w-[250px] aspect-square rounded-full'/>
+                <p className='absolute bottom-[15px] right-[10px] p-2 bg-red-500 rounded-full cursor-pointer' onClick={()=>handleLogoDelete()}>
+                    <DeleteIcon className='text-white '/>
+                </p>
+            </div>
+        }
         <div className='grid auto-rows-auto gap-4 w-3/4 grid-cols-2 mb-4'>
             {
                 companyDetailsParams.map((details)=>{
@@ -134,13 +159,16 @@ const UpdateCompany = ({props}) => {
                 })
             }
         </div>
-        <div className='p-4 border border-blue-500 rounded-md mb-4'> 
-            <p className='capitalize font-semibold text-center mb-2 text-blue-700'>upload logo</p>
-            <input 
-                type="file" 
-                onChange ={(event) => {setUploadFile(event.target.files[0]);}} 
-            />
-        </div>
+        {
+            companyDetails.logo_url.length == 0 &&
+            <div className='p-4 border border-blue-500 rounded-md mb-4'> 
+                <p className='capitalize font-semibold text-center mb-2 text-blue-700'>upload logo</p>
+                <input 
+                    type="file" 
+                    onChange ={(event) => {setUploadFile(event.target.files[0]);}} 
+                />
+            </div>
+        }
         <p className='text-white w-1/2 px-4 py-2 bg-green-700 font-semibold rounded-md text-center hover:scale-110 cursor-pointer transition' onClick={()=>handleImageUpload()}>Update</p>
         {loading && <Loader/>}
         {

@@ -3,8 +3,9 @@ import AddIcon from '@mui/icons-material/Add';
 import { createSearchParams, useNavigate } from 'react-router-dom'
 import axios from 'axios';
 import Loader from '../../components/common/Loader'
-
-
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import EditNoteIcon from '@mui/icons-material/EditNote';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 const AllCompany = () => {
   const navigate=useNavigate()
   const [allCompany,setAllCompany]=useState([]);
@@ -29,8 +30,13 @@ const AllCompany = () => {
     navigate("/company/new")
   }
 
+  
+  const handleViewCompany=(companyId)=>{
+    navigate(`/company/view/${companyId}`)
+  }
+
   const handleUpdateCompany=(companyId)=>{
-    navigate(`/company/${companyId}`)
+    navigate(`/company/update/${companyId}`)
   }
 
   const handleDeleteCompany=(companyId)=>{
@@ -52,9 +58,9 @@ const AllCompany = () => {
           <p>{details.company_name}</p>
         </div>
         <div className='flex gap-x-2 	'>
-          <span className='p-1 px-4 rounded-md text-white bg-green-500 cursor-pointer'>View</span>
-          <span className='p-1 px-4 rounded-md text-white bg-blue-500 cursor-pointer' onClick={()=>handleUpdateCompany(details._id)}>Update</span>
-          <span className='p-1 px-4 rounded-md text-white bg-red-500 cursor-pointer' onClick={()=>handleDeleteCompany(details._id)}>Delete</span>
+          <span className='p-1 px-4 rounded-md text-white bg-green-500 cursor-pointer' onClick={()=>handleViewCompany(details._id)}><VisibilityIcon/> View</span>
+          <span className='p-1 px-4 rounded-md text-white bg-blue-500 cursor-pointer' onClick={()=>handleUpdateCompany(details._id)}><EditNoteIcon/> Update</span>
+          <span className='p-1 px-4 rounded-md text-white bg-red-500 cursor-pointer' onClick={()=>handleDeleteCompany(details._id)}><DeleteForeverIcon/> Delete</span>
         </div>
       </div>
     )
