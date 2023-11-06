@@ -72,3 +72,143 @@ input[type="number"]::-webkit-outer-spin-button {
       width: 0%;
   }
 }
+
+.primary-save-button{
+  color: #f5f3f3;
+  background-color: #2ba827;
+  font-family: 'Space Mono', sans-serif;
+}
+
+.primary-cancel-button{
+  color: #f5f3f3;
+  background-color: #ff003c;
+  font-family: 'Space Mono', sans-serif;
+}
+
+.secondary-button{
+  color: #f5f3f3;
+  background-color: #445ce3;
+  font-family: 'Space Mono', sans-serif;
+}
+
+.button{
+    display: inline-block;
+    background: #8BC34A;
+    color: #fefefe;
+    font-size: 1.2em;
+    padding: 1em;
+    border-radius: 4px;
+    text-align: center;
+    border:0;
+    cursor:pointer;
+    min-width:150px;
+    position:relative;
+
+    
+  &.animate{
+    border-radius:50%;
+    width:75px;
+    height:75px;
+    min-width:0;
+    color: transparent;
+    
+    &:after{
+      position:absolute;
+      width:30px;
+      height:30px;
+      content:'';
+      border: 4px solid #fefefe;
+      left:50%;
+      top:50%;
+      border-left-color:transparent;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      animation-name: spin;
+      transition-timing-function:ease-in-out;
+      animation-duration: 2.5s;
+      animation-fill-mode: forwards;
+    }
+    
+    &.success:before{
+      position:absolute;
+      width:30px;
+      height:15px;
+      content:'';
+      border: 4px solid #fefefe;
+      left:50%;
+      top:50%;
+      border-right: 0;
+      border-top: 0;
+      transform: translate(-50%, -50%) rotate(0deg) scale(0);
+      animation-name: success;
+      transition-timing-function:ease;
+      animation-duration: 1.5s;
+      animation-fill-mode: forwards;
+      animation-delay: 2.5s;
+    }
+   
+    &.error{
+      position: relative;
+      animation: vibrate ease-in 0.5s forwards;
+      animation-delay: 2.5s;
+    
+      &:before{
+        color: #fff;
+        position: absolute;
+        content: '!';
+        font-size: 1.8rem;
+        font-weight: bold;
+        text-align: center;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        animation: error ease-in 0.5s forwards;
+        animation-delay: 2.5s;
+      }
+    }
+  }
+}
+
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg) scale(1);}
+    90% { transform: translate(-50%, -50%) rotate(1080deg) scale(1); }
+    100% { transform: scale(0); }
+    }
+
+
+@keyframes success{
+    from {
+       transform: translate(-50%, -50%) rotate(0) scale(0);
+       }
+    to {
+      transform: translate(-50%, -70%) rotate(-45deg) scale(1);
+    }
+}
+
+
+@keyframes error {
+    from { 
+    -webkit-transform: translate(-50%, -50%) scale(0);
+    }
+    to { 
+    -webkit-transform: translate(-50%, -50%) scale(1);
+    background-color: #f44336;
+    }
+}
+
+
+@keyframes vibrate {
+    0%, 30%, 60%, 85%, 100% { 
+      left: 0;
+      background-color: #f44336;
+    }
+    10%, 40%, 90%, 70% { 
+      left: -2px;
+      background-color: #f44336;
+    }
+    20%, 50%, 80%, 95% { 
+      left: 2px;
+      background-color: #f44336;
+    }
+}
