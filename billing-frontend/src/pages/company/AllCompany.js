@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import AddIcon from '@mui/icons-material/Add';
-import { createSearchParams, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import axios from 'axios';
-import Loader from '../../components/common/Loader'
+import Loader from '../../components/common/Loader';
+import ButtonComponent from '../../components/common/ButtonComponent';
 
 
 const AllCompany = () => {
@@ -48,13 +49,24 @@ const AllCompany = () => {
     return(
       <div className='px-4 py-4 rounded-md border border-gray-500 w-full flex justify-between items-center mb-4 shadow-md'>
         <div className='flex items-center justify-between gap-x-2' >
-          <img src={details.logo_url} className='rounded-full w-[50px] h-[50px]'/>
+          <img src={details.logo_url} alt="" className='rounded-full w-[50px] h-[50px]'/>
           <p>{details.company_name}</p>
         </div>
         <div className='flex gap-x-2 	'>
-          <span className='p-1 px-4 rounded-md text-white bg-green-500 cursor-pointer'>View</span>
-          <span className='p-1 px-4 rounded-md text-white bg-blue-500 cursor-pointer' onClick={()=>handleUpdateCompany(details._id)}>Update</span>
-          <span className='p-1 px-4 rounded-md text-white bg-red-500 cursor-pointer' onClick={()=>handleDeleteCompany(details._id)}>Delete</span>
+          <ButtonComponent
+            txt="View"
+            buttonType="primary-save-button"
+          />
+          <ButtonComponent
+            txt="Update"
+            buttonType="secondary-button"
+            onClickCallback={()=>handleUpdateCompany(details._id)}
+          />
+          <ButtonComponent
+            txt="Delete"
+            buttonType="primary-cancel-button"
+            onClickCallback={()=>handleDeleteCompany(details._id)}
+          />
         </div>
       </div>
     )
