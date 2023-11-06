@@ -4,8 +4,9 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios';
 import Loader from '../../components/common/Loader';
 import ButtonComponent from '../../components/common/ButtonComponent';
-
-
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import EditNoteIcon from '@mui/icons-material/EditNote';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 const AllCompany = () => {
   const navigate=useNavigate()
   const [allCompany,setAllCompany]=useState([]);
@@ -30,8 +31,13 @@ const AllCompany = () => {
     navigate("/company/new")
   }
 
+  
+  const handleViewCompany=(companyId)=>{
+    navigate(`/company/view/${companyId}`)
+  }
+
   const handleUpdateCompany=(companyId)=>{
-    navigate(`/company/${companyId}`)
+    navigate(`/company/update/${companyId}`)
   }
 
   const handleDeleteCompany=(companyId)=>{
