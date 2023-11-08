@@ -53,6 +53,10 @@ const companySchema = new mongoose.Schema({
     type:String,
     required:true,
   },
+  isDeleted:{
+    type:Boolean,
+    default:false
+  }
 });
 
 const company = mongoose.model("company", companySchema);

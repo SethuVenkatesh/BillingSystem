@@ -35,7 +35,7 @@ app.post("/company/new", async (request, response) => {
 
 app.get("/company/all",async (request,response)=>{
     try{
-        const allCompany=await company.find();
+        const allCompany=await company.find({isDeleted:false});
         response.status(200).send(allCompany)
     }catch(e){
         console.log(e);
@@ -74,8 +74,12 @@ app.put("/company/:id",async (request,response)=>{
 app.delete("/company/:id",async (request,response)=>{
     try{
         let companyId=request.params.id
-        const companyDetail=await company.deleteOne({_id:companyId});
-        response.status(200).send(companyDetail)
+        const updatedcompany=await company.findByIdAndUpdate(
+            companyId,
+            {isDeleted:true},
+            {new: true},
+        );
+        response.status(200).send(updatedcompany)
     }catch(e){
         console.log(e);
         response.status(400).send("error in deleting company")

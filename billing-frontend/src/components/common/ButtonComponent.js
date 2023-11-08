@@ -1,15 +1,16 @@
 import React from 'react';
 
 const ButtonComponent = ({
-    txt,
+    buttonText,
     buttonType,
-    onClickCallback
+    onClickCallback,
+    iconComponent
   }) => {
 
   return (
     <div className='inline-block'>
-      <button className={`font-bold min-w-[130px] text-[1.2em] px-[32px] py-[15px] m-2 scale-90 rounded-2xl hover:scale-100 duration-300 hover:ease-in ${buttonType}`} onClick={onClickCallback}>
-          {txt} 
+      <button className={`font-bold flex items-center justify-center gap-x-2 min-w-[130px] text-base px-2 py-2 m-2 scale-90 rounded-md hover:scale-100 duration-100 hover:ease-in ${buttonType}`} onClick={onClickCallback}>
+          {iconComponent} {buttonText} 
       </button>
     </div>
   )
