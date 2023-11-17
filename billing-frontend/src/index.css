@@ -91,6 +91,18 @@ input[type="number"]::-webkit-outer-spin-button {
   font-family: 'Space Mono', sans-serif;
 }
 
+.ok-btn{
+  color: #f5f3f3;
+  background-color: green;
+  font-family: 'Space Mono', sans-serif;
+}
+
+.cancel-btn{
+  color: #f5f3f3;
+  background-color: gray;
+  font-family: 'Space Mono', sans-serif;
+}
+
 
 .button{
     display: inline-block;
