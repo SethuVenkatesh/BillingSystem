@@ -7,6 +7,7 @@ import ButtonComponent from '../../components/common/ButtonComponent';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+
 const AllCompany = () => {
   const navigate=useNavigate()
   const [allCompany,setAllCompany]=useState([]);
@@ -60,18 +61,21 @@ const AllCompany = () => {
         </div>
         <div className='flex gap-x-2 	'>
           <ButtonComponent
-            txt="View"
-            buttonType="primary-save-button"
+            buttonText="View"
+            buttonType="success-btn"
+            iconComponent={<VisibilityIcon/>}
           />
           <ButtonComponent
-            txt="Update"
-            buttonType="secondary-button"
+            buttonText="Update"
+            buttonType="update-btn"
             onClickCallback={()=>handleUpdateCompany(details._id)}
+            iconComponent={<EditNoteIcon/>}
           />
           <ButtonComponent
-            txt="Delete"
-            buttonType="primary-cancel-button"
+            buttonText="Delete"
+            buttonType="danger-btn"
             onClickCallback={()=>handleDeleteCompany(details._id)}
+            iconComponent={<DeleteForeverIcon/>}
           />
         </div>
       </div>

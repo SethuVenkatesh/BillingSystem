@@ -73,23 +73,36 @@ input[type="number"]::-webkit-outer-spin-button {
   }
 }
 
-.primary-save-button{
+.success-btn{
   color: #f5f3f3;
   background-color: #2ba827;
   font-family: 'Space Mono', sans-serif;
 }
 
-.primary-cancel-button{
+.update-btn{
+  color: #f5f3f3;
+  background-color: #445ce3;
+  font-family: 'Space Mono', sans-serif;
+}
+
+.danger-btn{
   color: #f5f3f3;
   background-color: #ff003c;
   font-family: 'Space Mono', sans-serif;
 }
 
-.secondary-button{
+.ok-btn{
   color: #f5f3f3;
-  background-color: #445ce3;
+  background-color: green;
   font-family: 'Space Mono', sans-serif;
 }
+
+.cancel-btn{
+  color: #f5f3f3;
+  background-color: gray;
+  font-family: 'Space Mono', sans-serif;
+}
+
 
 .button{
     display: inline-block;
