@@ -14,9 +14,8 @@ const SignUpPage = () => {
     navigate('/')
   }
 
-
   return (
-      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-blue-800 via-white to-blue-800">
+      <div className="flex items-center justify-center h-screen bg-authimg bg-cover bg-center bg-no-repeat">
           <div className='p-8 border border-gray-300 rounded-md flex flex-col w-1/4 gap-4 z-10 bg-white shadow-md min-w-[300px]'>
               <p className='text-center font-bold text-slate-500 text-xl '>Sign Up</p>
               <input type='' className='px-2 py-2 border-2 border-gray-400 rounded-md outline-none focus:border-sky-500	' placeholder='Username'/>
