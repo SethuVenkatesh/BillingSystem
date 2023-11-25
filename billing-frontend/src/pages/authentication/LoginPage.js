@@ -3,6 +3,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import PopupComponent from '../../components/common/PopupComponent';
 import { useNavigate } from 'react-router-dom';
+import api from '../../axios';
 import { useRef } from 'react';
 const LoginPage = () => {
   const itemsRef = useRef([]);
@@ -23,22 +24,36 @@ const LoginPage = () => {
   }
 
   const [passwordShown,setPasswordShown] = useState('password')
-
   const [newPasswordShown,setNewPasswordShown] = useState('password');
   const [confirmNewPasswordShown, setConfirmNewPasswordShown] =  useState('password');
+  const [userCredentials,setUserCredentials] = useState({
+    username:'',
+    password:''
+  })
   const navigate = useNavigate()
 
   const handlePassword=(method, passwordType )=>{
     const newInputType = passwordType === 'text' ? 'password' : 'text';
-    if(method === 'password'){
+    if(method === 'newPassword'){
       setNewPasswordShown(newInputType);  
-    }else if(method === 'confirmPassword'){
+    }else if(method === 'confirmNewPassword'){
       setConfirmNewPasswordShown(newInputType);
     }
+    else{
+      setPasswordShown(newInputType)
+    }
+  }
+
+  const handleInputChange = (e) => {
+    setUserCredentials({...userCredentials, [e.target.name]:e.target.value})
   }
 
   const handleSignUp = () =>{
     navigate('/signup')
+  }
+
+  const handleLogin = () =>{
+    api.post("/user/login",{userCredentials})
   }
 
   const handleForgotPassword = () =>{
@@ -111,7 +126,7 @@ const LoginPage = () => {
         <input type='text' className='px-2 py-2 border-2 border-gray-400 rounded-md outline-none focus:border-sky-500	cursor-not-allowed' placeholder='Email' name='email' disabled/>
         <div className='relative'>
           <input type={`${newPasswordShown}`} className='w-full px-2 py-2 border-2 border-gray-400 rounded-md outline-none focus:border-sky-500' placeholder='Password' name='newPassword'/>
-          <span className='absolute right-2 top-2 cursor-pointer z-10' onClick={()=>handlePassword('password', newPasswordShown)}>
+          <span className='absolute right-2 top-2 cursor-pointer z-10' onClick={()=>handlePassword('newPassword', newPasswordShown)}>
               {
                 newPasswordShown === 'text' ? <VisibilityIcon/> : <VisibilityOffIcon/>
               }
@@ -119,7 +134,7 @@ const LoginPage = () => {
         </div>
         <div className='relative'>
           <input type={`${confirmNewPasswordShown}`} className='w-full px-2 py-2 border-2 border-gray-400 rounded-md outline-none focus:border-sky-500' placeholder='Confirm Password' name='confirmNewPassword'/>
-          <span className='absolute right-2 top-2 cursor-pointer z-10' onClick={()=>handlePassword('confirmPassword', confirmNewPasswordShown)}>
+          <span className='absolute right-2 top-2 cursor-pointer z-10' onClick={()=>handlePassword('confirmNewPassword', confirmNewPasswordShown)}>
               {
                 confirmNewPasswordShown === 'text' ? <VisibilityIcon/> : <VisibilityOffIcon/>
               }
@@ -154,16 +169,16 @@ const LoginPage = () => {
         </PopupComponent>
           <div className='p-8 border border-gray-300 rounded-md flex flex-col w-1/4 gap-4 z-10 bg-white shadow-md min-w-[350px]'>
               <p className='text-center font-bold text-slate-500 text-xl '>Login</p>
-              <input type='' className='px-2 py-2 border-2 border-gray-400 rounded-md outline-none focus:border-sky-500	' placeholder='Username'/>
+              <input type='' className='px-2 py-2 border-2 border-gray-400 rounded-md outline-none focus:border-sky-500	' placeholder='Username' name='username' onChange={handleInputChange}/>
               <div className='relative'>
-                <input type={`${passwordShown}`} className='w-full px-2 py-2 border-2 border-gray-400 rounded-md outline-none focus:border-sky-500	' placeholder='Password'/>
-                <span className='absolute right-2 top-2 cursor-pointer z-10' onClick={()=>handlePassword()}>
+                <input type={`${passwordShown}`} className='w-full px-2 py-2 border-2 border-gray-400 rounded-md outline-none focus:border-sky-500	' placeholder='Password' name='password' onChange={handleInputChange}/>
+                <span className='absolute right-2 top-2 cursor-pointer z-10' onClick={()=>handlePassword("password",passwordShown)}>
                     {
                       passwordShown=='text' ? <VisibilityIcon/> : <VisibilityOffIcon/>
                     }
                 </span>
               </div>
-              <div className='bg-blue-500 px-2 py-2 rounded-md font-bold text-white text-center cursor-pointer'>Login</div>
+              <div className='bg-blue-500 px-2 py-2 rounded-md font-bold text-white text-center cursor-pointer' onClick={()=>handleLogin()}>Login</div>
               <div className='flex justify-between'>
                 <p className='text-blue-600 font-semibold cursor-pointer' onClick={()=>handleForgotPassword()}>Forgot Password?</p>
                 <p className='text-blue-600 font-semibold cursor-pointer' onClick={()=>handleSignUp()}>Create an account</p>

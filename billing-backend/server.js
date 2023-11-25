@@ -15,7 +15,7 @@ mongoose.connect(process.env.mongoUrl,{useNewUrlParser: true,useUnifiedTopology:
 
 const Company = require("./contollers/Company")
 const User = require("./contollers/User")
-
+const Employee = require("./contollers/Employee")
 //applying middleware cors and bodyparser json
 app.use(express.json());
 app.use(cors())
@@ -23,6 +23,7 @@ app.use(cors())
 //routes 
 app.use('/company',Company)
 app.use('/user',User)
+app.use("/employee",Employee)
 
 //listening to port
 app.listen(process.env.port,(req,res)=>{
