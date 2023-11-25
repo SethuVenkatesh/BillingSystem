@@ -3,8 +3,8 @@ import { useEffect,useState } from 'react'
 import PhoneIcon from '@mui/icons-material/Phone';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import Loader from '../../components/common/Loader'
-import axios from 'axios'
 import { useParams } from 'react-router-dom'
+import api from '../../axios';
 
 const ViewCompany = () => {
 
@@ -28,7 +28,7 @@ const ViewCompany = () => {
     useEffect(()=>{
         console.log(companyId)
         setLoading(true);
-        axios.get(`http://localhost:4000/company/${companyId}`).then((res)=>{
+        api.get(`/company/${companyId}`).then((res)=>{
             setLoading(false);
             setCompanyDetails(res.data)
         }).catch(e=>{

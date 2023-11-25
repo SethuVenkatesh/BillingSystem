@@ -6,6 +6,7 @@ import { companyDetailsParams,bankDetailsParams } from '../../constants';
 import { useState,useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
+import api from '../../axios';
 import axios from 'axios';
 
 const UpdateCompany = () => {
@@ -94,7 +95,7 @@ const UpdateCompany = () => {
       }
 
     const updateCompany= (companyData)=>{
-        axios.put(`http://localhost:4000/company/${companyId}`,{companyData}).then((res)=>{
+        api.put(`/company/${companyId}`,{companyData}).then((res)=>{
             console.log(res)
             setLoading(false);
             setUploadFile(null)
@@ -112,7 +113,7 @@ const UpdateCompany = () => {
   useEffect(()=>{
     console.log(companyId)
     setLoading(true);
-    axios.get(`http://localhost:4000/company/${companyId}`).then((res)=>{
+    api.get(`/company/${companyId}`).then((res)=>{
       setLoading(false);
       setCompanyDetails(res.data)
     }).catch(e=>{

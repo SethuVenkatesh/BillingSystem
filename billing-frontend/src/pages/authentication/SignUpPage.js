@@ -3,6 +3,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { useNavigate } from 'react-router-dom';
 import Toaster from '../../components/common/Toaster';
+import api from '../../axios';
 
 const SignUpPage = () => {
   const [passwordShown,setPasswordShown] = useState('password');
@@ -36,9 +37,6 @@ const SignUpPage = () => {
   }
 
   const createNewAccount = () => {
-    console.log("////////////////////////////////////");
-    console.log(userData);
-    console.log(userData.password !== userData.confirmPassword)
     if(!isValidEmail(userData.email)){
       setToastMsg("Enter a valid email address");
       return;
@@ -48,6 +46,9 @@ const SignUpPage = () => {
       return;
     }
     // call create user api
+    api.post('/user/new',{userData}).then((req,res)=>{
+      console.log(res)
+    }).catch(e=>console.log("error"))
   }
 
   const handleInputChange = (e) => {
