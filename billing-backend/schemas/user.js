@@ -14,12 +14,11 @@ const userSchema = new mongoose.Schema({
     required:true
   },
   profile_url:{
-    type:String,
-    required:true,
+    type:String
   },
   mobile_number:{
     type:Number,
-    required:true,
+    required:true
   },
   is_deleted:{
     type:Boolean,
@@ -27,6 +26,6 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-const user = mongoose.model("company", userSchema);
+const user = mongoose.model("user", userSchema);
 
 module.exports = user;

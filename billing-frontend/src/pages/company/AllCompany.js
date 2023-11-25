@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios';
 import Loader from '../../components/common/Loader';
 import ButtonComponent from '../../components/common/ButtonComponent';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import api from '../../axios';
 
 const AllCompany = () => {
   const navigate=useNavigate()
@@ -20,7 +20,7 @@ const AllCompany = () => {
 
 
   const getCompanies=()=>{
-    axios.get("http://localhost:4000/company/all").then((res)=>{
+    api.get("/company/all").then((res)=>{
       setAllCompany(res.data)
       setLoading(false)
     }).catch(err=>{
@@ -43,7 +43,7 @@ const AllCompany = () => {
 
   const handleDeleteCompany=(companyId)=>{
     setLoading(true)
-    axios.delete(`http://localhost:4000/company/${companyId}`).then((res)=>{
+    api.delete(`/company/${companyId}`).then((res)=>{
       console.log("deleted succesfully");
       getCompanies();
     }).catch(e=>{
@@ -63,6 +63,7 @@ const AllCompany = () => {
           <ButtonComponent
             buttonText="View"
             buttonType="success-btn"
+            onClickCallback={()=>handleViewCompany(details._id)}
             iconComponent={<VisibilityIcon/>}
           />
           <ButtonComponent

@@ -4,6 +4,7 @@ import axios from 'axios';
 import { companyDetailsParams,bankDetailsParams } from '../../constants';
 import Loader from '../../components/common/Loader';
 import Toaster from '../../components/common/Toaster';
+import api from '../../axios';
 const NewCompany = () => {
     const [loading,setLoading]=useState(false);
     const [toastMsg,setToastMsg] =useState("");
@@ -81,7 +82,7 @@ const NewCompany = () => {
       }
 
       const createCompany= (companyData)=>{
-        axios.post("http://localhost:4000/company/new",{companyData}).then((res)=>{
+        api.post("/company/new",{companyData}).then((res)=>{
             console.log(res)
             setLoading(false);
         }).catch((err)=>{
