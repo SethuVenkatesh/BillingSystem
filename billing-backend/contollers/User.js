@@ -1,6 +1,8 @@
 const express=require('express')
 var router = express.Router();
-const user = require('../schemas/user')
+const user = require('../schemas/user');
+const { sendMail } = require('../helper/SendMail');
+const authToken = require('../schemas/authToken');
 
 router.post('/new',async (request,response)=>{
     const userDetails = request.body.userDetails;
@@ -46,6 +48,38 @@ router.post('/details',async (request,response)=>{
         response.status(200).send(userData);
     }catch(e){
 
+    }
+})
+
+router.post('/reset_password', async (request,response) => {
+    try{
+        const email = request.body.email;
+        const userData = await user.findOne({email:email});
+        if(!userData){
+            response.status(200).json({status:false, msg:"email address is not registered yet."})
+        }
+
+        const otp = Math.floor(900000 * Math.random() + 100000);
+        const auth = await authToken.create({user_id:userData._id, verification_code:otp});
+        if(auth && auth.verification_code){
+            const subject = 'OTP verification';
+            const content = `<p>You have requested to reset your password. Please use the following One-Time Password (OTP) to complete the process:</p>
+                            <h2>Your OTP: <b>`+otp+`</b></h2>
+                            <p>If you did not request a password reset, please ignore this email.</p>
+                            <p>Use the provided OTP to reset your password. The OTP is valid for a short period of time.</p>
+                            <p>Best regards,<br>Your App Team</p>`;    
+            const res = await sendMail(email, subject, content);
+            if(res.status){
+                response.status(200).json({ status:false, msg:"mail sent successfully"});
+            }else{
+                response.status(200).json({ status:false, msg:'Sending mail failed..'});
+            }    
+        }else{
+            response.status(200).send('Error in generating OTP.');
+        }
+    }catch(e){
+        console.log(e);
+        response.status(400).json({err:e, msg:"error"});
     }
 })
 
