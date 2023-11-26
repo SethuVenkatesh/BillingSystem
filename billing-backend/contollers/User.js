@@ -27,15 +27,15 @@ router.post('/login',async (request,response)=>{
     
 })
 
-router.post('/isExist',async (request,response)=>{
+router.get('/isExist',async (request,response)=>{
     try{
-        let email = request.body.mailId;
+        let email = request.query.email;
         let emailFound = false;
         let userData =await user.findOne({email:email});
         if(userData){
             emailFound = true;
         }
-        response.status(200).send({emailFound:emailFound});
+        response.status(200).json({emailFound:emailFound});
     }catch(e){
 
     }
@@ -51,12 +51,12 @@ router.post('/details',async (request,response)=>{
     }
 })
 
-router.post('/reset_password', async (request,response) => {
+router.post('/reset_password/send_otp', async (request,response) => {
     try{
         const email = request.body.email;
         const userData = await user.findOne({email:email});
         if(!userData){
-            response.status(200).json({status:false, msg:"email address is not registered yet."})
+           return response.status(200).json({status:false, msg:"email address is not registered yet."});
         }
 
         const otp = Math.floor(900000 * Math.random() + 100000);
@@ -70,13 +70,47 @@ router.post('/reset_password', async (request,response) => {
                             <p>Best regards,<br>Your App Team</p>`;    
             const res = await sendMail(email, subject, content);
             if(res.status){
-                response.status(200).json({ status:false, msg:"mail sent successfully"});
+                response.status(200).json({ status:true, msg:"mail sent successfully"});
             }else{
                 response.status(200).json({ status:false, msg:'Sending mail failed..'});
             }    
         }else{
             response.status(200).send('Error in generating OTP.');
         }
+    }catch(e){
+        console.log(e);
+        response.status(400).json({err:e, msg:"error"});
+    }
+})
+
+router.get('/reset_password/verify_otp',async(request,response)=>{
+    try{
+        const email = request.query.email;
+        const userOTP = request.query.otp;
+        const userData = await user.findOne({email:email});
+        const auth = await authToken.findOne({user_id:userData._id}).sort({createdAt:-1}).limit(1);
+        if(auth && userData){
+            if(auth.verification_code == userOTP){
+                response.status(200).json({status:true, username:userData.username, msg:"OTP verified sucessfully"});
+            }else{
+                return response.status(200).json({status:false, msg:"Entered OTP is incorrect"});
+            }
+        }else{
+            return response.status(200).json({status:false, msg:"OTP expired. please click Resend OTP"});
+        }
+    }catch(e){
+        console.log(e);
+        response.status(400).json({err:e, msg:"error"});
+    }
+})
+
+router.patch('/reset_password',async(request,response)=>{
+    try{
+        const newPassword = request.body.password;
+        const email = request.body.email;
+        console.log("email : ",email," password : ",newPassword);
+        await user.findOneAndUpdate({email:email}, { $set: {password : newPassword}});
+        response.status(200).json({status:true, msg:"Password reseted successfully.."});
     }catch(e){
         console.log(e);
         response.status(400).json({err:e, msg:"error"});
