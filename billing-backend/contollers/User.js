@@ -25,4 +25,28 @@ router.post('/login',async (request,response)=>{
     
 })
 
+router.post('/isExist',async (request,response)=>{
+    try{
+        let email = request.body.mailId;
+        let emailFound = false;
+        let userData =await user.findOne({email:email});
+        if(userData){
+            emailFound = true;
+        }
+        response.status(200).send({emailFound:emailFound});
+    }catch(e){
+
+    }
+})
+
+router.post('/details',async (request,response)=>{
+    try{
+        let email = request.body.mailId;
+        let userData =await user.findOne({email:email}).select('-password');
+        response.status(200).send(userData);
+    }catch(e){
+
+    }
+})
+
 module.exports = router;

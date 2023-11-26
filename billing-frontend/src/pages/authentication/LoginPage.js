@@ -5,24 +5,24 @@ import PopupComponent from '../../components/common/PopupComponent';
 import { useNavigate } from 'react-router-dom';
 import api from '../../axios';
 import { useRef } from 'react';
-const LoginPage = () => {
-  const itemsRef = useRef([]);
+import Loader from '../../components/common/Loader';
+import Toaster from '../../components/common/Toaster';
 
+const LoginPage = () => {
+  let numberOfDigits = 6;
+  const otpBoxReference = useRef([]);
+  const [toastMsg,setToastMsg] =useState("");
+  const [loading,setLoading]=useState(false);
   const [showPopUp,setShowPopUp]=useState(false);
   const [resetPassIndex,setResetPassIndex] = useState(0);
+  let prevOtp = new Array(numberOfDigits).fill("");
   const [resetInfo,setResetInfo] = useState({
     email:"",
-    otp:"",
     username:"",
     password:"",
     confirm_password:""
   })
-
-
-  const onCloseFn=()=>{
-    setShowPopUp(false);
-  }
-
+  const navigate = useNavigate()
   const [passwordShown,setPasswordShown] = useState('password')
   const [newPasswordShown,setNewPasswordShown] = useState('password');
   const [confirmNewPasswordShown, setConfirmNewPasswordShown] =  useState('password');
@@ -30,8 +30,17 @@ const LoginPage = () => {
     username:'',
     password:''
   })
-  const navigate = useNavigate()
 
+  const onCloseFn=()=>{
+    setShowPopUp(false);
+    setResetPassIndex(0)
+  }
+
+  const isValidEmail = (email) => {
+    const regex =  /^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$/;
+    return email.match(regex);
+  }
+  
   const handlePassword=(method, passwordType )=>{
     const newInputType = passwordType === 'text' ? 'password' : 'text';
     if(method === 'newPassword'){
@@ -58,27 +67,92 @@ const LoginPage = () => {
 
   const handleForgotPassword = () =>{
     setShowPopUp(true)
+
   }
 
+  const handleSendOTP = () =>{
+    let mailId = resetInfo.email;
+    setLoading(true);
+    if(isValidEmail(mailId)){
+      api.post('/user/isExist',{mailId}).then((res)=>{
+        if(res.data.emailFound){
+          setResetPassIndex(1);
+          setLoading(false);
+        }else{
+          setLoading(false);
+          setToastMsg("This is email is not associated with any account")
+        }
+        
+      }).catch(e=>{
+        setLoading(false);
+        setToastMsg("This is email is not associated with any account")
+      })
+    }
+    else{
+      setLoading(false);
+      setToastMsg("Please Enter a valid email")
+    }
+  }
 
+  const handleSubmitOTP = () =>{
+    let mailId = resetInfo.email;
+    api.post('/user/details',{mailId}).then((res)=>{
+      setResetInfo({...resetInfo,username:res.data.username});
+      setResetPassIndex(2);
+    }).catch(e=>{
+      console.log("e")
+    })
+  }
 
   const handleOTPText = (event,inputIndex) => {
-    const key = event.key.toLowerCase(); 
+    const key = event.key.toLowerCase();
+    let prevValue = prevOtp[inputIndex]
+    const currValue = otpBoxReference.current[inputIndex].value;
+    
     if (key == "backspace" || key == "delete") {
-      const prevIndex = inputIndex - 1;
-      if(prevIndex >=0 && prevIndex <= 5){
-        itemsRef.current[prevIndex].focus();
+      if(prevValue == ""){
+        const prevIndex = inputIndex - 1;
+        if(prevIndex >=0 && prevIndex <= 5){
+          otpBoxReference.current[prevIndex].focus();
+        }
       }
+
     }else{
       const nextIndex = inputIndex + 1;
+      if(key>= "0" && key <= "9"){
+        otpBoxReference.current[inputIndex].value = key
+      }
       if(nextIndex <= 5){
-        itemsRef.current[nextIndex].focus();
+        otpBoxReference.current[nextIndex].focus();
       }
     }
-
+    let newOtp = [...prevOtp]
+    newOtp[inputIndex] = currValue
+    prevOtp=newOtp
   }
 
+
   const OTPInputForm = () =>{
+    const [resendTimer,setResetTimer] = useState(10);
+    const [showTimer,setShowTimer] = useState(false);
+
+    const handleResentOTP = () =>{
+      setShowTimer(true)
+      
+      let timer1 = setTimeout(() => {        
+        setShowTimer(false);
+        setResetTimer(10);
+      }, 10000);
+      return () => {
+        clearTimeout(timer1);
+      };
+    }
+    
+    useEffect(() => {
+      (resendTimer > 0 && showTimer)  && setTimeout(() => setResetTimer(resendTimer - 1), 1000);
+    }, [resendTimer,showTimer]);
+
+
     return (
       <div className='flex flex-col w-full gap-y-4 justify-center'>
                 <p className='font-bold text-blue-500 '>OTP Verification</p>
@@ -86,33 +160,28 @@ const LoginPage = () => {
 
                 <div className='flex items-center justify-between'>
                   {
-                    Array.from({length: 6},(_,index) => {
-                      if(index == 0){
-                        return(
-                          <input type='text'  
-                          autoFocus         
-                          ref={el => itemsRef.current[index] = el} 
-                          maxLength={1} 
-                          onKeyUp={(e)=>handleOTPText(e,index)}
-                          className='border-2 border-gray-300 appearance-none text-center w-[40px] h-[50px] rounded-md outline-none focus:border-sky-500 valid:border-sky-500' required/>
+                    Array.from({length: 6}, (v, index) =>{
+                      return (
+                        <input type='text'  
+                               ref={el => otpBoxReference.current[index] = el} 
+                               maxLength={1} 
+                               onKeyUp={(e)=> handleOTPText(e, index)}
+                               className='border-2 border-gray-300 appearance-none text-center w-[40px] h-[50px] rounded-md outline-none focus:border-sky-500 valid:border-sky-500' required
+                        />
                         )
-                      }
-                      else{
-                        return(
-                          <input type='text'           
-                          ref={el => itemsRef.current[index] = el} 
-                          onKeyUp={(e)=>handleOTPText(e,index)}
-                          maxLength={1} className='border-2 border-gray-300 appearance-none text-center w-[40px] h-[50px] rounded-md outline-none focus:border-sky-500 valid:border-sky-500' required/>
-                        )
-                      }
-                    
                     })
                   }
                 </div>
-                <p className='font-semibold text-blue-500 cursor-pointer text-sm'>Resend OTP</p>
+                {
+                  showTimer ?
+                  <p className='font-semibold text-slate-500 cursor-pointer text-sm'>Resend OTP in {resendTimer} seconds</p>
+                  : 
+                  <p className='font-semibold text-blue-500 cursor-pointer text-sm' onClick={()=>handleResentOTP()}>Resend OTP</p>
+
+                }
                 <p 
                 className='float-none font-semibold text-white bg-green-500 px-2 py-1 text-center w-fit rounded-sm mx-auto cursor-pointer' 
-                onClick={()=>setResetPassIndex(2)}>
+                onClick={()=>handleSubmitOTP()}>
                   Submit OTP
                 </p>
               </div>
@@ -122,9 +191,9 @@ const LoginPage = () => {
   const PasswordResetForm = () =>{
     return (
     <div className='flex flex-col w-full gap-y-4 justify-center items-center'>
-        <input type='text' className='px-2 py-2 border-2 border-gray-400 rounded-md outline-none focus:border-sky-500	cursor-not-allowed' placeholder='Username' name='username' disabled/>
-        <input type='text' className='px-2 py-2 border-2 border-gray-400 rounded-md outline-none focus:border-sky-500	cursor-not-allowed' placeholder='Email' name='email' disabled/>
-        <div className='relative'>
+        <input type='text' className='px-2 py-2 w-3/4 border-2 border-gray-400 rounded-md outline-none focus:border-sky-500	cursor-not-allowed' placeholder='Username' name='username' value={resetInfo.username} disabled/>
+        <input type='text' className='px-2 py-2 w-3/4 border-2 border-gray-400 rounded-md outline-none focus:border-sky-500	cursor-not-allowed' placeholder='Email' name='email' value={resetInfo.email} disabled/>
+        <div className='relative w-3/4'>
           <input type={`${newPasswordShown}`} className='w-full px-2 py-2 border-2 border-gray-400 rounded-md outline-none focus:border-sky-500' placeholder='Password' name='newPassword'/>
           <span className='absolute right-2 top-2 cursor-pointer z-10' onClick={()=>handlePassword('newPassword', newPasswordShown)}>
               {
@@ -132,7 +201,7 @@ const LoginPage = () => {
               }
           </span>
         </div>
-        <div className='relative'>
+        <div className='relative w-3/4'>
           <input type={`${confirmNewPasswordShown}`} className='w-full px-2 py-2 border-2 border-gray-400 rounded-md outline-none focus:border-sky-500' placeholder='Confirm Password' name='confirmNewPassword'/>
           <span className='absolute right-2 top-2 cursor-pointer z-10' onClick={()=>handlePassword('confirmNewPassword', confirmNewPasswordShown)}>
               {
@@ -153,13 +222,17 @@ const LoginPage = () => {
   
   return (
       <div className="flex items-center justify-center h-screen bg-authimg bg-cover bg-center bg-no-repeat">
+        {loading && <Loader/>}
+        {toastMsg.length>=1&&
+          <Toaster toastMsg={toastMsg} setToastMsg={setToastMsg} isSuccess={false}/>
+        }
         <PopupComponent  isOpen={showPopUp} onCloseFn={()=>onCloseFn()} popUpTitle={'Forgot Password'} isBtnVisible={false}>
           
           {
             resetPassIndex == 0 ? (
               <div className='flex flex-col w-full gap-y-4 justify-center items-center'>
                 <input type='' className='px-2 py-2  border-2 border-gray-400 rounded-md outline-none focus:border-sky-500 w-full' placeholder='email' onChange={(e)=>setResetInfo({...resetInfo,email:e.target.value})}/>
-                <p className='bg-blue-500 px-2 py-2 rounded-md font-semibold text-white text-center cursor-pointer w-fit' onClick={()=>setResetPassIndex(1)}>Sent OTP</p>
+                <p className='bg-blue-500 px-2 py-2 rounded-md font-semibold text-white text-center cursor-pointer w-fit' onClick={()=>handleSendOTP()}>Sent OTP</p>
               </div>
             ):
             (
