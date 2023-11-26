@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import PopupComponent from '../components/common/PopupComponent'
 import Loader from '../components/common/Loader';
+import { Navbar } from '../components/Navbar';
 const Home = () => {
 
   const [showPopUp,setShowPopUp]=useState(false);
@@ -17,6 +18,7 @@ const Home = () => {
   console.log(showPopUp)
   return (
     <div>
+      <Navbar/>
       <p>Home</p>
       <p>Home</p>
       <p>Home</p>
