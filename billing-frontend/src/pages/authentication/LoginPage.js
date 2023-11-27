@@ -12,6 +12,8 @@ const LoginPage = () => {
   let numberOfDigits = 6;
   const otpBoxReference = useRef([]);
   const [toastMsg,setToastMsg] =useState("");
+  const [succesNotification, setSuccesNotification] = useState(false);
+
   const [loading,setLoading]=useState(false);
   const [showPopUp,setShowPopUp]=useState(false);
   const [resetPassIndex,setResetPassIndex] = useState(0);
@@ -57,6 +59,10 @@ const LoginPage = () => {
     setUserCredentials({...userCredentials, [e.target.name]:e.target.value})
   }
 
+  const handlePasswordInputChange = (e) => {
+    setResetInfo({...resetInfo, [e.target.name]:e.target.value})
+  }
+
   const handleSignUp = () =>{
     navigate('/signup')
   }
@@ -71,37 +77,65 @@ const LoginPage = () => {
   }
 
   const handleSendOTP = () =>{
-    let mailId = resetInfo.email;
-    setLoading(true);
-    if(isValidEmail(mailId)){
-      api.post('/user/isExist',{mailId}).then((res)=>{
-        if(res.data.emailFound){
+    let email = resetInfo.email;
+    if(isValidEmail(email)){
+      setLoading(true);
+      api.post('/user/reset_password/send_otp',{email}).then((res)=>{
+        if(res.data.status){
           setResetPassIndex(1);
           setLoading(false);
+          setSuccesNotification(true);
+          setToastMsg("Mail send succesfully...");
         }else{
           setLoading(false);
-          setToastMsg("This is email is not associated with any account")
-        }
-        
+          setSuccesNotification(false);
+          setToastMsg("This is email is not associated with any account.")
+        }        
       }).catch(e=>{
+        console.log(e);
         setLoading(false);
-        setToastMsg("This is email is not associated with any account")
+        setSuccesNotification(false);
+        setToastMsg("Something went wrong")
       })
     }
     else{
-      setLoading(false);
-      setToastMsg("Please Enter a valid email")
+      setSuccesNotification(false);
+      setToastMsg("Please Enter a valid email");
     }
   }
 
   const handleSubmitOTP = () =>{
-    let mailId = resetInfo.email;
-    api.post('/user/details',{mailId}).then((res)=>{
-      setResetInfo({...resetInfo,username:res.data.username});
-      setResetPassIndex(2);
-    }).catch(e=>{
-      console.log("e")
+    let otp = 0;
+    let otpFilled = true;
+    otpBoxReference.current.forEach((data) => {
+      if(!data.value){
+        otpFilled = false;
+        return;
+      }
+      otp = parseInt(otp * 10) + parseInt(data.value);
     })
+    if(otpFilled){
+      let email = resetInfo.email;
+      api.get(`/user/reset_password/verify_otp?email=${email}&otp=${otp}`).then((res)=>{
+        if(res.data.status){
+          setResetInfo({...resetInfo,username:res.data.username})
+          setSuccesNotification(true);
+          setToastMsg(res.data.msg);
+          setResetPassIndex(2);
+        }else{
+          setSuccesNotification(false);
+          setToastMsg(res.data.msg);
+        }
+      }).catch(e=>{
+        console.log(e);
+        setSuccesNotification(false);
+        setToastMsg("Something went wrong")
+      })
+    }
+    else{
+      setSuccesNotification(false);
+      setToastMsg("Invalid OTP");
+    }
   }
 
   const handleOTPText = (event,inputIndex) => {
@@ -131,6 +165,38 @@ const LoginPage = () => {
     prevOtp=newOtp
   }
 
+  const resetUserPassword = () => {
+    setLoading(true);
+    if(resetInfo.password.length == 0){
+      setSuccesNotification(false);
+      setToastMsg("Password cannot be empty");
+      setLoading(false);
+      return;
+    }else if(resetInfo.confirm_password.length == 0){
+      setSuccesNotification(false);
+      setToastMsg("Confirm password cannot be empty");
+      setLoading(false);
+      return;
+    }
+    if(resetInfo.password !== resetInfo.confirm_password){
+      setSuccesNotification(false);
+      setToastMsg("Password and Confirm password should be same");
+      setLoading(false);
+      return;
+    }
+    let data = { email: resetInfo.email, password:resetInfo.newPassword}
+    api.patch('/user/reset_password', data).then((res) => {
+      setSuccesNotification(true);
+      setToastMsg(res.data.msg);
+      setLoading(false);
+      onCloseFn();
+    }).catch((e) => {
+      console.log(e);
+      setSuccesNotification(false);
+      setToastMsg("Something went wrong..");
+      setLoading(false);
+    })
+  }
 
   const OTPInputForm = () =>{
     const [resendTimer,setResetTimer] = useState(10);
@@ -194,7 +260,7 @@ const LoginPage = () => {
         <input type='text' className='px-2 py-2 w-3/4 border-2 border-gray-400 rounded-md outline-none focus:border-sky-500	cursor-not-allowed' placeholder='Username' name='username' value={resetInfo.username} disabled/>
         <input type='text' className='px-2 py-2 w-3/4 border-2 border-gray-400 rounded-md outline-none focus:border-sky-500	cursor-not-allowed' placeholder='Email' name='email' value={resetInfo.email} disabled/>
         <div className='relative w-3/4'>
-          <input type={`${newPasswordShown}`} className='w-full px-2 py-2 border-2 border-gray-400 rounded-md outline-none focus:border-sky-500' placeholder='Password' name='newPassword'/>
+          <input type={`${newPasswordShown}`} className='w-full px-2 py-2 border-2 border-gray-400 rounded-md outline-none focus:border-sky-500' placeholder='Password' name='password' value={resetInfo.password} onChange={handlePasswordInputChange}/>
           <span className='absolute right-2 top-2 cursor-pointer z-10' onClick={()=>handlePassword('newPassword', newPasswordShown)}>
               {
                 newPasswordShown === 'text' ? <VisibilityIcon/> : <VisibilityOffIcon/>
@@ -202,7 +268,7 @@ const LoginPage = () => {
           </span>
         </div>
         <div className='relative w-3/4'>
-          <input type={`${confirmNewPasswordShown}`} className='w-full px-2 py-2 border-2 border-gray-400 rounded-md outline-none focus:border-sky-500' placeholder='Confirm Password' name='confirmNewPassword'/>
+          <input type={`${confirmNewPasswordShown}`} className='w-full px-2 py-2 border-2 border-gray-400 rounded-md outline-none focus:border-sky-500' placeholder='Confirm Password' value={resetInfo.confirm_password} name='confirm_password' onChange={handlePasswordInputChange}/>
           <span className='absolute right-2 top-2 cursor-pointer z-10' onClick={()=>handlePassword('confirmNewPassword', confirmNewPasswordShown)}>
               {
                 confirmNewPasswordShown === 'text' ? <VisibilityIcon/> : <VisibilityOffIcon/>
@@ -211,7 +277,7 @@ const LoginPage = () => {
         </div>
         <p 
           className='font-semibold text-white bg-green-500 px-2 py-1 text-center w-1/2 rounded-sm mx-auto cursor-pointer capitalize' 
-          onClick={()=>setResetPassIndex(2)}>
+          onClick={()=> resetUserPassword()}>
           update
         </p>
     </div>
@@ -224,9 +290,9 @@ const LoginPage = () => {
       <div className="flex items-center justify-center h-screen bg-authimg bg-cover bg-center bg-no-repeat">
         {loading && <Loader/>}
         {toastMsg.length>=1&&
-          <Toaster toastMsg={toastMsg} setToastMsg={setToastMsg} isSuccess={false}/>
+          <Toaster toastMsg={toastMsg} setToastMsg={setToastMsg} isSuccess={succesNotification}/>
         }
-        <PopupComponent  isOpen={showPopUp} onCloseFn={()=>onCloseFn()} popUpTitle={'Forgot Password'} isBtnVisible={false}>
+        <PopupComponent  isOpen={showPopUp} onCloseFn={()=>onCloseFn()} popUpTitle={'Reset Password'} isBtnVisible={false}>
           
           {
             resetPassIndex == 0 ? (
