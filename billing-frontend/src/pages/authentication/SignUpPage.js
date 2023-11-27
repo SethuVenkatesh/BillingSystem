@@ -11,6 +11,7 @@ const SignUpPage = () => {
   const [passwordShown,setPasswordShown] = useState('password');
   const [confirmPasswordShown, setConfirmPasswordShown] =  useState('password');
   const [toastMsg,setToastMsg] =useState("");
+  const [succesNotification, setSuccesNotification] = useState(false);
   const [loading,setLoading]=useState(false);
   const [uploadFile, setUploadFile] = useState("");
   const [userData, setUserData] =  useState({
@@ -70,9 +71,11 @@ const SignUpPage = () => {
       if(key != 'profile_url'){
         if(userValidation[key].trim().length == 0){
           if(key == 'mobile_number'){
+            setSuccesNotification(false);
             setToastMsg("mobile number is required")
           }
           else{
+            setSuccesNotification(false);
             setToastMsg(`${key} is required`)
           }
           setLoading(false);
@@ -82,26 +85,39 @@ const SignUpPage = () => {
         else if(key == 'password'){
           if(userValidation.password !== userValidation.confirmPassword){
             setLoading(false);
+            setSuccesNotification(false);
             setToastMsg("Pasword and confirm password should be same");
             valSuccess = false
-            return; 
+            return false; 
           }
         }
         else if(key == 'email'){
             if(!isValidEmail(userValidation.email)){
+              setSuccesNotification(false);
               setToastMsg("Please Enter a valid email")
               setLoading(false);
               valSuccess = false
-              return; 
+              return false; 
             }
         }
       }
     }
-    if(!valSuccess) return false
+    if(!valSuccess) return false;
     if(uploadFile.length == 0){
       setLoading(false);
-      setToastMsg("Profile picture is required")
+      setSuccesNotification(false);
+      setToastMsg("Profile picture is required");
+      return false;
     }
+
+    api.get(`/user/isExist?email=${userValidation.email}`).then((res) => {
+      if(res.data.emailFound){
+        setSuccesNotification(false);
+        setLoading(false);
+        setToastMsg("Email already Exists. Use another email");
+        return;
+      }
+    });
     return true;
   }
 
@@ -122,7 +138,7 @@ const SignUpPage = () => {
       <div className="flex items-center justify-center h-screen bg-authimg bg-cover bg-center bg-no-repeat">
         {loading && <Loader/>}
         {toastMsg.length>=1&&
-          <Toaster toastMsg={toastMsg} setToastMsg={setToastMsg} isSuccess={false}/>
+          <Toaster toastMsg={toastMsg} setToastMsg={setToastMsg} isSuccess={succesNotification}/>
         }
           <div className='p-8 border border-gray-300 rounded-md flex flex-col w-1/4 gap-4 z-10 bg-white shadow-md min-w-[400px]'>
               <p className='text-center font-bold text-slate-500 text-xl '>Sign Up</p>
