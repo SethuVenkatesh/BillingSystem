@@ -1,6 +1,7 @@
 import React from 'react'
 import appLogo from '../assets/appLogo.png'
-
+import LogoutIcon from '@mui/icons-material/Logout';
+import PersonIcon from '@mui/icons-material/Person';
 export const Navbar = () => {
 
   const handleUserProfile = () =>{
@@ -20,15 +21,15 @@ export const Navbar = () => {
         <p className='font-bold text-blue-600 cursor-pointer text-md'>Billing</p>
         <p className='font-bold text-blue-600 cursor-pointer text-md'>Report</p>
       </div>
-      <div className='flex-1 flex items-center justify-center cursor-pointer relative'>
-        <div className='w-[50px] h-[50px] rounded-full border-gray-500 border shadow-lg' onClick={()=>handleUserProfile()}>
+      <div className='flex-1 flex items-center justify-center cursor-pointer relative group'>
+        <div className='w-[50px] h-[50px] rounded-full border-gray-500 border shadow-lg ' onClick={()=>handleUserProfile()}>
           <img src='https://w7.pngwing.com/pngs/81/570/png-transparent-profile-logo-computer-icons-user-user-blue-heroes-logo-thumbnail.png' className='object-cover rounded-full'/>
         </div>
         <div className='absolute top-[65px] right-[30px] z-30 w-fit '>
-          <div className='relative border border-gray-300 shadow-md rounded-md flex flex-col max-w-[200px]'>
-              <div className='px-2 py-1 text-ellipsis overflow-hidden whitespace-nowrap'>Hello, sethu kjkjnkjnkjkjkjnkjkjnkjnkjnkjnkjnkjnkjn</div>
-              <p className='px-2 py-1 w-fit'>Profile</p>
-              <p className='px-2 py-1 w-fit'>Logout</p>
+          <div className='relative border border-gray-300 shadow-md scale-0 duration-200 rounded-md flex flex-col max-w-[200px] text-slate-600 group-hover:scale-100 hidden group-hover:flex'>
+              <div className='px-4 py-1 text-ellipsis overflow-hidden whitespace-nowrap'>Hello, sethu kjkjnkjnkjkjkjnkjkjnkjnkjnkjnkjnkjnkjn</div>
+              <p className='px-4 py-1 w-full hover:text-blue-500 '><PersonIcon/> Profile</p>
+              <p className='px-4 py-1 w-full hover:text-red-500 '><LogoutIcon/> Logout</p>
           </div>
         </div>
       </div>
