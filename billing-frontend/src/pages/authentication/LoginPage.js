@@ -68,7 +68,19 @@ const LoginPage = () => {
   }
 
   const handleLogin = () =>{
-    api.post("/user/login",{userCredentials})
+    api.post("/user/login",{userCredentials}).then((res) => {
+      if(res.data.status){
+        setSuccesNotification(true);
+        setToastMsg(res.data.msg);
+        navigate('/home');
+      }else{
+        setSuccesNotification(false);
+        setToastMsg(res.data.msg);
+      }
+    }).catch((err) => {
+      setSuccesNotification(false);
+      setToastMsg("Something went wrong");
+    })
   }
 
   const handleForgotPassword = () =>{
@@ -327,4 +339,4 @@ const LoginPage = () => {
   )
 }
 
-export default LoginPage
+export default LoginPage;
