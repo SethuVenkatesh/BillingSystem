@@ -244,6 +244,7 @@ const LoginPage = () => {
         setToastMsg(res.data.msg);
         setLoading(false)
         setUserDetails(res.data)
+        localStorage.setItem('techprinting-current-user', JSON.stringify(res.data.userData));
         navigate('/home');
       }else{
         setSuccesNotification(false);

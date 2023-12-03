@@ -18,7 +18,6 @@ const Home = () => {
   console.log(showPopUp)
   return (
     <div>
-      {/* <Navbar/> */}
       <p>Home</p>
       <p>Home</p>
       <p>Home</p>

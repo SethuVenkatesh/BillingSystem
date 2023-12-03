@@ -1,3 +1,5 @@
+export const navBarTabs = ["home","company","employee","billing","report"]
+
 export const companyDetailsParams=[
     {inputType:"text",labelName:"company name",inputName:'company_name'},
     {inputType:"text",labelName:"address",inputName:'address'},

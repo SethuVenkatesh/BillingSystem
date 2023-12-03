@@ -10,7 +10,12 @@ export function UserDetailsProvider({ children }) {
   });
   
   useEffect(()=>{
-    setUserDetails({isLoggedIn:false})
+    let currentUser = JSON.parse(localStorage.getItem('techprinting-current-user'))
+    if(currentUser){
+      setUserDetails({isLoggedIn:true,userData:currentUser})
+    }else{
+      setUserDetails({isLoggedIn:false})
+    }
   },[])
 
   return (

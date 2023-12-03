@@ -1,6 +1,7 @@
 import { BrowserRouter as Router,Routes, Route, Navigate,Outlet } from 'react-router-dom'; 
 import Home from './pages/Home';
 
+
 import NewCompany from './pages/company/NewCompany';
 import AllCompany from './pages/company/AllCompany';
 import UpdateCompany from './pages/company/updateCompany';
@@ -17,41 +18,56 @@ import { UserDetailsContext } from './context/userContext';
 function App() {
 
   const {userDetails,setUserDetails} = useContext(UserDetailsContext);
+  console.log(userDetails)
+  
 
   return (
+
     <div>
-      {
-        userDetails.isLoggedIn && 
-        <>
-          <Navbar userDetails={userDetails}/>
-          <p className='mt-[70px]'></p>
-        </>
-      }
+      {userDetails &&
     <div className=''>
       <Router> 
+          {
+            userDetails.userData && 
+              <Navbar userDetails={userDetails}/>
+          }
           <Routes> 
-              <Route exact path='/' element={<LoginPage/>}></Route>
-              <Route exact path='/login' element={<LoginPage/>}></Route>
-              <Route exact path='/signup' element={<SignUpPage/>}></Route>
-              <Route
+             
+                {userDetails.isLoggedIn ?
+                  <>
+                   <Route exact path='/home' element={<Home/>}></Route>
+                   <Route exact path="/company/new" element={<NewCompany/>} /> 
+                   <Route exact path="/company/all" element={<AllCompany/>} /> 
+                   <Route exact path="/company/view/:companyId" element={<ViewCompany/>} /> 
+                   <Route exact path="/company/update/:companyId" element={<UpdateCompany/>} /> 
+                   <Route path='*' element={<NotFound/>}/>
+                  </>
+                : 
+                <>  
+
+                  <Route exact path='/' element={<LoginPage/>}></Route>
+                  <Route exact path='/signup' element={<SignUpPage/>}></Route>
+                  <Route exact path='/login' element={<LoginPage/>}></Route>
+                  </>
+                }
+              {/* <Route
+                exact
                 path="/home"
                 element={
                   userDetails.isLoggedIn ? (
-                    <Outlet>
-                      <Route path="/home" element={<Home />} />
-                    </Outlet>
+                      <Home/>
                   ) : (
-                    <Navigate to="/login" replace />
+                    // <Navigate to="/login" replace />
+                    <></>
                   )
                 }
-              />
-              <Route
+              /> */}
+              {/* <Route
+                exact
                 path="/company/new"
                 element={
                   userDetails.isLoggedIn ? (
-                    <Outlet>
-                      <Route path="/company/new" element={<NewCompany />} />
-                    </Outlet>
+                      <NewCompany />
                   ) : (
                     <Navigate to="/login" replace />
                   )
@@ -61,21 +77,7 @@ function App() {
                 path="/company/all"
                 element={
                   userDetails.isLoggedIn ? (
-                    <Outlet>
-                      <Route path="/company/all" element={<AllCompany />} />
-                    </Outlet>
-                  ) : (
-                    <Navigate to="/login" replace />
-                  )
-                }
-              />
-              <Route
-                path="/company/new"
-                element={
-                  userDetails.isLoggedIn ? (
-                    <Outlet>
-                      <Route path="/company/new" element={<NewCompany />} />
-                    </Outlet>
+                      <AllCompany />
                   ) : (
                     <Navigate to="/login" replace />
                   )
@@ -85,9 +87,7 @@ function App() {
                 path="/company/update/:companyId"
                 element={
                   userDetails.isLoggedIn ? (
-                    <Outlet>
-                      <Route path="/company/update/:companyId" element={<UpdateCompany />} />
-                    </Outlet>
+                    <UpdateCompany />
                   ) : (
                     <Navigate to="/login" replace />
                   )
@@ -97,18 +97,16 @@ function App() {
                 path="/company/view/:companyId"
                 element={
                   userDetails.isLoggedIn ? (
-                    <Outlet>
-                      <Route path="/company/update/:companyId" element={<ViewCompany />} />
-                    </Outlet>
-                  ) : (
+                      <ViewCompany/>
+                    ) : (
                     <Navigate to="/login" replace />
                   )
                 }
-              />
-              <Route path='*' element={<NotFound/>}/>
+              /> */}
           </Routes> 
       </Router> 
     </div>
+    }
     </div>
   );
 }
