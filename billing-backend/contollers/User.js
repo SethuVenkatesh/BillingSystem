@@ -19,10 +19,11 @@ router.post('/login',async (request,response)=>{
     try{
         const userDetails = request.body.userCredentials;
         const userData=await user.findOne({username:userDetails.username});
-        response.status(200).send(userData)
+        const {password, ...others} = userData;
+        response.status(200).json({status:true, msg:"Login Successfully.", userData:others});
     }catch(e){
         console.log(e);
-        response.status(400).send("error in retriving company")
+        response.status(400).json({status:false, msg:"error in retriving company"})
     }
     
 })
