@@ -84,7 +84,7 @@ const AllCompany = () => {
   }
 
   return (
-    <div className='min-h-screen p-4'>
+    <div className=' p-4'>
         <p className='text-slate-500 font-bold text-center text-lg'>All Company List</p>
         <div className='flex items-center justify-end pb-4'>
           <p 

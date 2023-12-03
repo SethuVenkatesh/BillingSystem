@@ -18,12 +18,15 @@ router.post('/new',async (request,response)=>{
 router.post('/login',async (request,response)=>{
     try{
         const userDetails = request.body.userCredentials;
-        const userData=await user.findOne({username:userDetails.username});
-        const {password, ...others} = userData;
-        response.status(200).json({status:true, msg:"Login Successfully.", userData:others});
+        const userData=await user.findOne({username:userDetails.username,password:userDetails.password}).select('-password');
+        if(userData){
+            response.status(200).json({isLoggedIn:true, msg:"Login Successfully.", userData:userData,status:true});
+        }else{
+            response.status(200).json({isLoggedIn:false, msg:"Invalid Credentials", status:false});
+        }
     }catch(e){
         console.log(e);
-        response.status(400).json({status:false, msg:"error in retriving company"})
+        response.status(400).json({isLoggedIn:false, msg:"Something Went wrong",status:false})
     }
     
 })
