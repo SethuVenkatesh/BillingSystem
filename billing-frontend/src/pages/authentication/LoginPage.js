@@ -238,12 +238,13 @@ const LoginPage = () => {
 
   const handleLogin = () =>{
     setLoading(true);
-    api.post("/user/login",{userCredentials}).then((res) => {
+    api.post("/user/login",{userCredentials}, {withCredentials:true}).then((res) => {
       if(res.data.status){
+        localStorage.setItem('techprinting-current-user', JSON.stringify(res.data.userData));
         setSuccesNotification(true);
         setToastMsg(res.data.msg);
-        setLoading(false)
-        setUserDetails(res.data)
+        setLoading(false);
+        setUserDetails(res.data);
         navigate('/home');
       }else{
         setSuccesNotification(false);

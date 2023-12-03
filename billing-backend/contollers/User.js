@@ -3,15 +3,38 @@ var router = express.Router();
 const user = require('../schemas/user');
 const { sendMail } = require('../helper/SendMail');
 const authToken = require('../schemas/authToken');
+const jwt = require('jsonwebtoken');
+
+const verifyAuth = async(req, res, next) => {
+    const token = req.headers.authorization;
+    if(token){
+        try{
+            const decode = jwt.verify(token, process.env.jwt_secret);
+            req.user = await user.findById("6560fdea42f9d0d49cd3df68").select('-password');
+            next();
+        }
+        catch(err)
+        {
+            console.log(err);
+            res.clearCookie("access_token");
+            res.status(401).json({err : "Not Authorized, Wrong Token"});
+        }
+    }else{
+        res.clearCookie("access_token");
+        return res.status(401).json({err : "Not Authorized, No Token Found"});
+    }
+}
 
 router.post('/new',async (request,response)=>{
     const userDetails = request.body.userDetails;
      try{
         const userData = await user.create(userDetails);
-        response.status(200).send("user created successfully")
+        const {password, ...others} = userData;
+        const token = generateJwtToken(userData._id);
+        response.cookie("access_token",token, { httpOnly:false }).status(200).send({status:true, user:others, msg:"user created successfully"})
     }catch(e){
         console.log("err",e)
-        response.status(500).send("user creation failed")
+        response.status(400).send({status:false, msg:"user creation failed"})
     }
 })
 
@@ -20,7 +43,8 @@ router.post('/login',async (request,response)=>{
         const userDetails = request.body.userCredentials;
         const userData=await user.findOne({username:userDetails.username,password:userDetails.password}).select('-password');
         if(userData){
-            response.status(200).json({isLoggedIn:true, msg:"Login Successfully.", userData:userData,status:true});
+            const token = generateJwtToken(userData._id);
+            response.cookie("access_token",token, { httpOnly:false }).status(200).json({isLoggedIn:true, msg:"Login Successfully.", userData:userData,status:true});
         }else{
             response.status(200).json({isLoggedIn:false, msg:"Invalid Credentials", status:false});
         }
@@ -41,7 +65,7 @@ router.get('/isExist',async (request,response)=>{
         }
         response.status(200).json({emailFound:emailFound});
     }catch(e){
-
+        response.status(400).json({emailFound:false, status:false});
     }
 })
 
@@ -51,7 +75,7 @@ router.post('/details',async (request,response)=>{
         let userData =await user.findOne({email:email}).select('-password');
         response.status(200).send(userData);
     }catch(e){
-
+        console.log(e);
     }
 })
 
@@ -120,5 +144,9 @@ router.patch('/reset_password',async(request,response)=>{
         response.status(400).json({err:e, msg:"error"});
     }
 })
+
+const generateJwtToken = (id) => {
+    return jwt.sign({id}, process.env.jwt_secret, { expiresIn : '600s'})
+}
 
 module.exports = router;
