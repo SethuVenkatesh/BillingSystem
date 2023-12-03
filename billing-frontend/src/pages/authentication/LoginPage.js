@@ -7,10 +7,12 @@ import api from '../../axios';
 import { useRef } from 'react';
 import Loader from '../../components/common/Loader';
 import Toaster from '../../components/common/Toaster';
+import { useContext } from 'react';
+import { UserDetailsContext } from '../../context/userContext';
 
 
 //Password Reset Form
-const PasswordResetForm = ({resetInfo,setResetInfo,resetUserPassword,setResetPassIndex,setToastMsg,setSuccesNotification,setLoading}) =>{
+const PasswordResetForm = ({resetInfo,setResetInfo,resetUserPassword}) =>{
 
   const [newPasswordShown,setNewPasswordShown] = useState('password');
   const [confirmNewPasswordShown, setConfirmNewPasswordShown] =  useState('password');
@@ -211,6 +213,8 @@ const LoginPage = () => {
     username:'',
     password:''
   })
+  const {userDetails,setUserDetails} = useContext(UserDetailsContext);
+
 
   const onCloseFn=()=>{
     setShowPopUp(false);
@@ -233,17 +237,22 @@ const LoginPage = () => {
   }
 
   const handleLogin = () =>{
+    setLoading(true);
     api.post("/user/login",{userCredentials}).then((res) => {
       if(res.data.status){
         setSuccesNotification(true);
         setToastMsg(res.data.msg);
+        setLoading(false)
+        setUserDetails(res.data)
         navigate('/home');
       }else{
         setSuccesNotification(false);
         setToastMsg(res.data.msg);
+        setLoading(false)
       }
     }).catch((err) => {
       setSuccesNotification(false);
+      setLoading(false)
       setToastMsg("Something went wrong");
     })
   }
@@ -322,6 +331,9 @@ const LoginPage = () => {
       setLoading(false);
     })
   }
+
+
+
   return (
       <div className="flex items-center justify-center h-screen bg-authimg bg-cover bg-center bg-no-repeat">
         {loading && <Loader/>}
@@ -341,7 +353,7 @@ const LoginPage = () => {
               resetPassIndex == 1 ?
               <OTPInputForm resetInfo={resetInfo} setResetInfo={setResetInfo} setResetPassIndex={setResetPassIndex} setToastMsg={setToastMsg} setSuccesNotification={setSuccesNotification}/>
               : 
-              <PasswordResetForm resetInfo={resetInfo} setResetInfo={setResetInfo} resetUserPassword={resetUserPassword}  setResetPassIndex={setResetPassIndex} setToastMsg={setToastMsg} setSuccesNotification={setSuccesNotification}/>
+              <PasswordResetForm resetInfo={resetInfo} setResetInfo={setResetInfo} resetUserPassword={resetUserPassword} />
             )
           }
         </PopupComponent>

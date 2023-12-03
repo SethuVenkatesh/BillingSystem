@@ -11,20 +11,23 @@ import SignUpPage from './pages/authentication/SignUpPage';
 import { Navbar } from './components/Navbar';
 import NotFound from './pages/NotFound';
 
+import { useContext } from 'react';
+import { UserDetailsContext } from './context/userContext';
+
 function App() {
 
-  const isLoggedIn = false;
+  const {userDetails,setUserDetails} = useContext(UserDetailsContext);
 
   return (
     <div>
       {
-        isLoggedIn && 
+        userDetails.isLoggedIn && 
         <>
-          <Navbar/>
+          <Navbar userDetails={userDetails}/>
           <p className='mt-[70px]'></p>
         </>
       }
-    <div className='h-screen'>
+    <div className=''>
       <Router> 
           <Routes> 
               <Route exact path='/' element={<LoginPage/>}></Route>
@@ -33,7 +36,7 @@ function App() {
               <Route
                 path="/home"
                 element={
-                  isLoggedIn ? (
+                  userDetails.isLoggedIn ? (
                     <Outlet>
                       <Route path="/home" element={<Home />} />
                     </Outlet>
@@ -45,7 +48,7 @@ function App() {
               <Route
                 path="/company/new"
                 element={
-                  isLoggedIn ? (
+                  userDetails.isLoggedIn ? (
                     <Outlet>
                       <Route path="/company/new" element={<NewCompany />} />
                     </Outlet>
@@ -57,7 +60,7 @@ function App() {
               <Route
                 path="/company/all"
                 element={
-                  isLoggedIn ? (
+                  userDetails.isLoggedIn ? (
                     <Outlet>
                       <Route path="/company/all" element={<AllCompany />} />
                     </Outlet>
@@ -69,7 +72,7 @@ function App() {
               <Route
                 path="/company/new"
                 element={
-                  isLoggedIn ? (
+                  userDetails.isLoggedIn ? (
                     <Outlet>
                       <Route path="/company/new" element={<NewCompany />} />
                     </Outlet>
@@ -81,7 +84,7 @@ function App() {
               <Route
                 path="/company/update/:companyId"
                 element={
-                  isLoggedIn ? (
+                  userDetails.isLoggedIn ? (
                     <Outlet>
                       <Route path="/company/update/:companyId" element={<UpdateCompany />} />
                     </Outlet>
@@ -93,7 +96,7 @@ function App() {
               <Route
                 path="/company/view/:companyId"
                 element={
-                  isLoggedIn ? (
+                  userDetails.isLoggedIn ? (
                     <Outlet>
                       <Route path="/company/update/:companyId" element={<ViewCompany />} />
                     </Outlet>
