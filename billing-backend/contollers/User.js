@@ -5,6 +5,26 @@ const { sendMail } = require('../helper/SendMail');
 const authToken = require('../schemas/authToken');
 const jwt = require('jsonwebtoken');
 
+const verifyAuth = async(req, res, next) => {
+    const token = req.headers.authorization;
+    if(token){
+        try{
+            const decode = jwt.verify(token, process.env.jwt_secret);
+            req.user = await user.findById("6560fdea42f9d0d49cd3df68").select('-password');
+            next();
+        }
+        catch(err)
+        {
+            console.log(err);
+            res.clearCookie("access_token");
+            res.status(401).json({err : "Not Authorized, Wrong Token"});
+        }
+    }else{
+        res.clearCookie("access_token");
+        return res.status(401).json({err : "Not Authorized, No Token Found"});
+    }
+}
+
 router.post('/new',async (request,response)=>{
     const userDetails = request.body.userDetails;
      try{
@@ -45,7 +65,7 @@ router.get('/isExist',async (request,response)=>{
         }
         response.status(200).json({emailFound:emailFound});
     }catch(e){
-
+        response.status(400).json({emailFound:false, status:false});
     }
 })
 
@@ -55,7 +75,7 @@ router.post('/details',async (request,response)=>{
         let userData =await user.findOne({email:email}).select('-password');
         response.status(200).send(userData);
     }catch(e){
-
+        console.log(e);
     }
 })
 
