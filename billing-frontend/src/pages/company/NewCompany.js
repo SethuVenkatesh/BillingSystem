@@ -90,7 +90,7 @@ const NewCompany = () => {
         })
       }
       return (
-    <div className='w-full px-4 py-2 flex items-center justify-center flex-col'>
+    <div className='w-full px-4 py-2 flex items-center justify-center flex-col z-10'>
         <div className='flex items-center justify-between gap-x-2 mb-4 w-full '>
             <p className='border border-blue-800 w-full'></p>
             <p className='font-semibold text-blue-700 text-md min-w-fit'>Company Details</p>

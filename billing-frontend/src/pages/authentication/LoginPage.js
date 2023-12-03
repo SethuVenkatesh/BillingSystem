@@ -10,7 +10,7 @@ import Toaster from '../../components/common/Toaster';
 
 
 //Password Reset Form
-const PasswordResetForm = ({resetInfo,setResetInfo,resetUserPassword}) =>{
+const PasswordResetForm = ({resetInfo,setResetInfo,resetUserPassword,setResetPassIndex,setToastMsg,setSuccesNotification,setLoading}) =>{
 
   const [newPasswordShown,setNewPasswordShown] = useState('password');
   const [confirmNewPasswordShown, setConfirmNewPasswordShown] =  useState('password');
@@ -28,57 +28,8 @@ const PasswordResetForm = ({resetInfo,setResetInfo,resetUserPassword}) =>{
     setResetInfo({...resetInfo, [e.target.name]:e.target.value})
   }
 
-  const handleSignUp = () =>{
-    navigate('/signup')
-  }
 
-  const handleLogin = () =>{
-    api.post("/user/login",{userCredentials}).then((res) => {
-      if(res.data.status){
-        setSuccesNotification(true);
-        setToastMsg(res.data.msg);
-        navigate('/home');
-      }else{
-        setSuccesNotification(false);
-        setToastMsg(res.data.msg);
-      }
-    }).catch((err) => {
-      setSuccesNotification(false);
-      setToastMsg("Something went wrong");
-    })
-  }
 
-  const handleForgotPassword = () =>{
-    setShowPopUp(true)
-
-  }
-
-  const handleSendOTP = () =>{
-    let email = resetInfo.email;
-    if(isValidEmail(email)){
-      setLoading(true);
-      api.post('/user/reset_password/send_otp',{email}).then((res)=>{
-        if(res.data.status){
-          setResetPassIndex(1);
-          setLoading(false);
-          setSuccesNotification(true);
-          setToastMsg("Mail send succesfully...");
-        }else{
-          setLoading(false);
-          setSuccesNotification(false);
-          setToastMsg("This is email is not associated with any account.")
-        }        
-      }).catch(e=>{
-        console.log(e);
-        setLoading(false);
-        setSuccesNotification(false);
-        setToastMsg("Something went wrong")
-      })
-    }
-    else{
-      setSuccesNotification(false);
-      setToastMsg("Please Enter a valid email");
-    }
   return (
   <div className='flex flex-col w-full gap-y-4 justify-center items-center'>
       <input type='text' className='px-2 py-2 w-3/4 border-2 border-gray-400 rounded-md outline-none focus:border-sky-500	cursor-not-allowed' placeholder='Username' name='username' value={resetInfo.username} disabled/>
@@ -107,6 +58,7 @@ const PasswordResetForm = ({resetInfo,setResetInfo,resetUserPassword}) =>{
   </div>
   )
 }
+
 
 //OTP Input Form
 const OTPInputForm = ({resetInfo,setResetInfo,setResetPassIndex,setToastMsg,setSuccesNotification}) =>{
@@ -280,15 +232,27 @@ const LoginPage = () => {
     setUserCredentials({...userCredentials, [e.target.name]:e.target.value})
   }
 
-
+  const handleLogin = () =>{
+    api.post("/user/login",{userCredentials}).then((res) => {
+      if(res.data.status){
+        setSuccesNotification(true);
+        setToastMsg(res.data.msg);
+        navigate('/home');
+      }else{
+        setSuccesNotification(false);
+        setToastMsg(res.data.msg);
+      }
+    }).catch((err) => {
+      setSuccesNotification(false);
+      setToastMsg("Something went wrong");
+    })
+  }
 
   const handleSignUp = () =>{
     navigate('/signup')
   }
 
-  const handleLogin = () =>{
-    api.post("/user/login",{userCredentials})
-  }
+
 
   const handleForgotPassword = () =>{
     setShowPopUp(true)
@@ -297,31 +261,30 @@ const LoginPage = () => {
 
   const handleSendOTP = () =>{
     let email = resetInfo.email;
-    // if(isValidEmail(email)){
-    //   setLoading(true);
-    //   api.post('/user/reset_password/send_otp',{email}).then((res)=>{
-    //     if(res.data.status){
-    //       setResetPassIndex(1);
-    //       setLoading(false);
-    //       setSuccesNotification(true);
-    //       setToastMsg("Mail send succesfully...");
-    //     }else{
-    //       setLoading(false);
-    //       setSuccesNotification(false);
-    //       setToastMsg("This is email is not associated with any account.")
-    //     }        
-    //   }).catch(e=>{
-    //     console.log(e);
-    //     setLoading(false);
-    //     setSuccesNotification(false);
-    //     setToastMsg("Something went wrong")
-    //   })
-    // }
-    // else{
-    //   setSuccesNotification(false);
-    //   setToastMsg("Please Enter a valid email");
-    // }
-    setResetPassIndex(1);
+    if(isValidEmail(email)){
+      setLoading(true);
+      api.post('/user/reset_password/send_otp',{email}).then((res)=>{
+        if(res.data.status){
+          setResetPassIndex(1);
+          setLoading(false);
+          setSuccesNotification(true);
+          setToastMsg("Mail send succesfully...");
+        }else{
+          setLoading(false);
+          setSuccesNotification(false);
+          setToastMsg("This is email is not associated with any account.")
+        }        
+      }).catch(e=>{
+        console.log(e);
+        setLoading(false);
+        setSuccesNotification(false);
+        setToastMsg("Something went wrong")
+      })
+    }
+    else{
+      setSuccesNotification(false);
+      setToastMsg("Please Enter a valid email");
+    }
 
   }
 
@@ -378,7 +341,7 @@ const LoginPage = () => {
               resetPassIndex == 1 ?
               <OTPInputForm resetInfo={resetInfo} setResetInfo={setResetInfo} setResetPassIndex={setResetPassIndex} setToastMsg={setToastMsg} setSuccesNotification={setSuccesNotification}/>
               : 
-              <PasswordResetForm resetInfo={resetInfo} setResetInfo={setResetInfo} resetUserPassword={resetUserPassword}/>
+              <PasswordResetForm resetInfo={resetInfo} setResetInfo={setResetInfo} resetUserPassword={resetUserPassword}  setResetPassIndex={setResetPassIndex} setToastMsg={setToastMsg} setSuccesNotification={setSuccesNotification}/>
             )
           }
         </PopupComponent>
