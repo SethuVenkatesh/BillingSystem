@@ -55,11 +55,13 @@ const AllCompany = () => {
   const CompanyCard=({details})=>{
     return(
       <div className='px-4 py-4 rounded-md border border-gray-500 w-full flex justify-between items-center mb-4 shadow-md'>
-        <div className='flex items-center justify-between gap-x-2' >
-          <img src={details.logo_url} alt="" className='rounded-full w-[50px] h-[50px]'/>
+        <div className='flex flex-1 items-center gap-x-2' >
+          <div className='w-[50px] h-[50px] rounded-full'>
+            <img src={details.logo_url} alt="" className='object-cover h-full w-full rounded-full'/>
+          </div>
           <p>{details.company_name}</p>
         </div>
-        <div className='flex gap-x-2 	'>
+        <div className='flex flex-1 gap-x-2 	'>
           <ButtonComponent
             buttonText="View"
             buttonType="success-btn"
@@ -85,7 +87,6 @@ const AllCompany = () => {
 
   return (
     <div className=' p-4'>
-        <p className='text-slate-500 font-bold text-center text-lg'>All Company List</p>
         <div className='flex items-center justify-end pb-4'>
           <p 
             onClick={()=>handleNewCompany()}

@@ -319,7 +319,8 @@ const LoginPage = () => {
       setLoading(false);
       return;
     }
-    let data = { email: resetInfo.email, password:resetInfo.newPassword}
+    
+    let data = { email: resetInfo.email, password:resetInfo.password}
     api.patch('/user/reset_password', data).then((res) => {
       setSuccesNotification(true);
       setToastMsg(res.data.msg);

@@ -14,6 +14,8 @@ import NotFound from './pages/NotFound';
 
 import { useContext } from 'react';
 import { UserDetailsContext } from './context/userContext';
+import NewEmployee from './pages/employee/NewEmployee';
+import AllEmployee from './pages/employee/AllEmployee';
 
 function App() {
 
@@ -32,14 +34,19 @@ function App() {
               <Navbar userDetails={userDetails}/>
           }
           <Routes> 
-             
-                {userDetails.isLoggedIn ?
+                {
+                userDetails.isLoggedIn ?
                   <>
                    <Route exact path='/home' element={<Home/>}></Route>
                    <Route exact path="/company/new" element={<NewCompany/>} /> 
                    <Route exact path="/company/all" element={<AllCompany/>} /> 
                    <Route exact path="/company/view/:companyId" element={<ViewCompany/>} /> 
                    <Route exact path="/company/update/:companyId" element={<UpdateCompany/>} /> 
+                   <Route exact path="/employee/all" element={<AllEmployee/>} /> 
+                   <Route exact path="/employee/new" element={<NewEmployee/>} /> 
+                   <Route exact path='/' element={<LoginPage/>}></Route>
+                   <Route exact path='/signup' element={<SignUpPage/>}></Route>
+                   <Route exact path='/login' element={<LoginPage/>}></Route>
                    <Route path='*' element={<NotFound/>}/>
                   </>
                 : 
@@ -48,6 +55,7 @@ function App() {
                   <Route exact path='/' element={<LoginPage/>}></Route>
                   <Route exact path='/signup' element={<SignUpPage/>}></Route>
                   <Route exact path='/login' element={<LoginPage/>}></Route>
+                  <Route exact path='*' element={<LoginPage/>}></Route>
                   </>
                 }
               {/* <Route

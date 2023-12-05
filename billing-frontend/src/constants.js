@@ -11,6 +11,18 @@ export const companyDetailsParams=[
     {inputType:"text",labelName:"GST number",inputName:'GST_number'},
 ]
 
+export const employeeDetailsParams=[
+    {inputType:"text",labelName:"employee name",inputName:'employee_name'},
+    {inputType:"text",labelName:"address",inputName:'address'},
+    {inputType:"text",labelName:"city",inputName:'city'},
+    {inputType:"text",labelName:"state",inputName:'state'},
+    {inputType:"number",labelName:"pincode",inputName:'pincode'},
+    {inputType:"number",labelName:"mobile number",inputName:'mobile_number'},
+    {inputType:"date",labelName:"date of birth",inputName:'date_of_birth'},
+    {inputType:"number",labelName:"alternate mobile number",inputName:'alt_mobile_number'},
+]
+ 
+
 export const bankDetailsParams=[
     {inputType:"text",labelName:"bank name",inputName:'bank_name'},
     {inputType:"text",labelName:"bank branch",inputName:'bank_branch'},

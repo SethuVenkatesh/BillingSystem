@@ -21,6 +21,7 @@ export const Navbar = ({userDetails}) => {
 
   const handleLogout = () =>{
     localStorage.removeItem('techprinting-current-user');
+    navigate('/')
     setUserDetails({isLoggedIn:false})
   }
 
@@ -48,7 +49,7 @@ export const Navbar = ({userDetails}) => {
   return (
     <>
     {
-      (location.pathname != '/login' && '/signup' ) &&
+      (location.pathname != '/login' && location.pathname != '/signup' && location.pathname != '/') &&
     <>
     <div className='fixed top-0 w-full flex items-center justify-between h-[70px] shadow-lg z-30 bg-white'>
       <div className='flex-1 h-full'>
