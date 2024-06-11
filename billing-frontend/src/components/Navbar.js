@@ -8,9 +8,9 @@ import { useContext } from 'react';
 import { UserDetailsContext } from '../context/userContext';
 import { navBarTabs } from '../constants';
 
-export const Navbar = ({userDetails}) => {
+export const Navbar = ({}) => {
 
-  const {setUserDetails} = useContext(UserDetailsContext);
+  const { userLogout } = useContext(UserDetailsContext);
   const [activeTab,setActiveTab] = useState(navBarTabs[0]);
   const navigate = useNavigate();
   const location = useLocation()
@@ -19,10 +19,16 @@ export const Navbar = ({userDetails}) => {
 
   }
 
-  const handleLogout = () =>{
-    localStorage.removeItem('techprinting-current-user');
+  // const handleLogout = () =>{
+  //   localStorage.removeItem('techprinting-current-user');
+  //   navigate('/')
+  //   setUserDetails({isLoggedIn:false})
+  // }
+
+  const handleLogout =async () =>{
+    
+    await userLogout();
     navigate('/')
-    setUserDetails({isLoggedIn:false})
   }
 
   const handleTabChange = (tabName) =>{
@@ -69,11 +75,11 @@ export const Navbar = ({userDetails}) => {
       </div>
       <div className='flex-1 flex items-center justify-center cursor-pointer relative group pb-4 mt-2'>
         <div className='w-[50px] h-[50px] rounded-full border-gray-500 border shadow-lg ' onClick={()=>handleUserProfile()}>
-          <img src={userDetails.userData.profile_url} className='object-cover h-full w-full rounded-full'/>
+          {/* <img src={userDetails.userData.profile_url} className='object-cover h-full w-full rounded-full'/> */}
         </div>
         <div className='absolute hidden group-hover:block top-[65px] right-[30px] z-30 '>
           <div className="relative border border-gray-300 bg-white shadow-md duration-200 rounded-md flex flex-col min-w-[200px] max-w-[250px] text-slate-600 ">
-              <div className='px-4 py-1 text-ellipsis overflow-hidden whitespace-nowrap'>Hello, {userDetails.userData.username}</div>
+              {/* <div className='px-4 py-1 text-ellipsis overflow-hidden whitespace-nowrap'>Hello, {userDetails.userData.username}</div> */}
               <p className='px-4 py-1 w-full hover:text-blue-500 '><PersonIcon/> Profile</p>
               <p className='px-4 py-1 w-full hover:text-red-500 ' onClick={()=>handleLogout()}><LogoutIcon/> Logout</p>
           </div>

@@ -213,7 +213,7 @@ const LoginPage = () => {
     username:'',
     password:''
   })
-  const {userDetails,setUserDetails} = useContext(UserDetailsContext);
+  const { userLogin } = useContext(UserDetailsContext);
 
 
   const onCloseFn=()=>{
@@ -236,26 +236,47 @@ const LoginPage = () => {
     setUserCredentials({...userCredentials, [e.target.name]:e.target.value})
   }
 
-  const handleLogin = () =>{
+  // const handleLogin = () =>{
+  //   setLoading(true);
+  //   api.post("/user/login",{userCredentials}).then((res) => {
+  //     if(res.data.status){
+  //       setSuccesNotification(true);
+  //       setToastMsg(res.data.msg);
+  //       setLoading(false)
+  //       setUserDetails(res.data)
+  //       localStorage.setItem('techprinting-current-user', JSON.stringify(res.data.userData));
+  //       navigate('/dashboard');
+  //     }else{
+  //       setSuccesNotification(false);
+  //       setToastMsg(res.data.msg);
+  //       setLoading(false)
+  //     }
+  //   }).catch((err) => {
+  //     setSuccesNotification(false);
+  //     setLoading(false)
+  //     setToastMsg("Something went wrong");
+  //   })
+  // }
+
+  const handleLogin =async () =>{
     setLoading(true);
-    api.post("/user/login",{userCredentials}).then((res) => {
+    try {
+      const res = await userLogin(userCredentials);
       if(res.data.status){
         setSuccesNotification(true);
         setToastMsg(res.data.msg);
         setLoading(false)
-        setUserDetails(res.data)
-        localStorage.setItem('techprinting-current-user', JSON.stringify(res.data.userData));
-        navigate('/home');
+        navigate("/dashboard/home");
       }else{
         setSuccesNotification(false);
         setToastMsg(res.data.msg);
         setLoading(false)
       }
-    }).catch((err) => {
+    } catch (error) {
       setSuccesNotification(false);
       setLoading(false)
       setToastMsg("Something went wrong");
-    })
+    }
   }
 
   const handleSignUp = () =>{

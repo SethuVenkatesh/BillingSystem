@@ -21,6 +21,10 @@ const userSchema = new mongoose.Schema({
     type:Number,
     required:true
   },
+  firm:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:'firm'
+  },
   is_deleted:{
     type:Boolean,
     default:false

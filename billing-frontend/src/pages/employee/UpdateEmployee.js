@@ -2,28 +2,27 @@ import React from 'react'
 import InputComponent from '../../components/common/InputComponent';
 import Toaster from '../../components/common/Toaster';
 import Loader from '../../components/common/Loader';
-import { companyDetailsParams,bankDetailsParams } from '../../constants';
+import { employeeDetailsParams,bankDetailsParams } from '../../constants';
 import { useState,useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
 import api from '../../axios';
 import axios from 'axios';
 
-const UpdateCompany = () => {
-
+const UpdateEmployee = () => {
     const [loading,setLoading]=useState(false);
     const [toastMsg,setToastMsg] =useState("");
-    const { companyId } = useParams();
-    const [companyDetails,setCompanyDetails]=useState({
-        company_name:"",
-        logo_url:"",
+    const { employeeId } = useParams();
+    const [employeeDetails,setEmployeeDetails]=useState({
+        employee_name:"",
+        profile_url:"",
         address:"",
         city:"",
         state:"",
         pincode:"",
         mobile_number:"",
         alt_mobile_number:"",
-        GST_number:"",
+        date_of_birth:"",
         bank_name:"",
         bank_branch:"",
         account_number:"",
@@ -46,9 +45,9 @@ const UpdateCompany = () => {
                 formData
                 )
                 .then((response) => {
-                let companyData={...companyDetails,logo_url:response.data.secure_url}
-                setCompanyDetails({...companyDetails,logo_url:response.data.secure_url})
-                updateCompany(companyData)
+                let employeeData={...employeeDetails,profile_url:response.data.secure_url}
+                setEmployeeDetails({...employeeDetails,profile_url:response.data.secure_url})
+                updateEmployee(employeeData)
                 })
                 .catch((error) => {
                 console.log(error);
@@ -57,18 +56,18 @@ const UpdateCompany = () => {
             }
             else{
                 console.log("image upload no")
-                updateCompany(companyDetails)
+                updateEmployee(employeeDetails)
             }
         }
       };
 
       const handleValidate=()=>{
         let valSuccess = true;
-        for(let index=0;index<companyDetailsParams.length;index++){
-            console.log(companyDetailsParams[index])
-            if(companyDetails[companyDetailsParams[index].inputName].length == 0){
+        for(let index=0;index<employeeDetailsParams.length;index++){
+            console.log(employeeDetailsParams[index])
+            if(employeeDetails[employeeDetailsParams[index].inputName].length == 0){
                 setLoading(false);
-                setToastMsg(companyDetailsParams[index].labelName +" is required")
+                setToastMsg(employeeDetailsParams[index].labelName +" is required")
                 valSuccess = false;
                 return;
             }
@@ -77,7 +76,7 @@ const UpdateCompany = () => {
         if(!valSuccess) return false;
         for(let index=0;index<bankDetailsParams.length;index++){
             console.log(bankDetailsParams[index])
-            if(companyDetails[bankDetailsParams[index].inputName].length == 0){
+            if(employeeDetails[bankDetailsParams[index].inputName].length == 0){
                 setLoading(false);
                 setToastMsg(bankDetailsParams[index].labelName +" is required")
                 valSuccess = false;
@@ -86,7 +85,7 @@ const UpdateCompany = () => {
         }
         if(!valSuccess) return false;
         console.log(uploadFile)
-        if(companyDetails.logo_url.length == 0 &&  uploadFile == null){
+        if(employeeDetails.profile_url.length == 0 &&  uploadFile == null){
             setLoading(false);
             setToastMsg("Company Logo is required")
             return false;
@@ -94,8 +93,8 @@ const UpdateCompany = () => {
         return true;
       }
 
-    const updateCompany= (companyData)=>{
-        api.put(`/company/${companyId}`,{companyData}).then((res)=>{
+    const updateEmployee= (employeeData)=>{
+        api.put(`/employee/${employeeId}`,{employeeData}).then((res)=>{
             console.log(res)
             setLoading(false);
             setUploadFile(null)
@@ -106,16 +105,19 @@ const UpdateCompany = () => {
     }
 
     const handleLogoDelete=()=>{
-        setCompanyDetails({...companyDetails,logo_url:""});
+        setEmployeeDetails({...employeeDetails,profile_url:""});
     }
 
 
   useEffect(()=>{
-    console.log(companyId)
+    console.log(employeeId)
     setLoading(true);
-    api.get(`/company/${companyId}`).then((res)=>{
+    api.get(`/employee/${employeeId}`).then((res)=>{
       setLoading(false);
-      setCompanyDetails(res.data)
+      let employeeDetail = res.data;
+      employeeDetail.date_of_birth = employeeDetail.date_of_birth.substring(0,10)
+      setEmployeeDetails(employeeDetail)
+
     }).catch(e=>{
       console.log(e)
     })
@@ -125,13 +127,13 @@ const UpdateCompany = () => {
     <div className='w-full px-4 py-2 flex items-center justify-center flex-col'>
         <div className='flex items-center justify-between gap-x-2 mb-4 w-full '>
             <p className='border border-blue-800 w-full'></p>
-            <p className='font-semibold text-blue-700 text-md min-w-fit'>Company Details</p>
+            <p className='font-semibold text-blue-700 text-md min-w-fit'>Employee Details</p>
             <p className='border border-blue-800 w-full'></p>        
         </div>
         {
-            companyDetails.logo_url.length > 0 &&
+            employeeDetails.profile_url.length > 0 &&
             <div className='mb-4 relative'>
-                <img src={companyDetails.logo_url} className='w-[250px] aspect-square rounded-full'/>
+                <img src={employeeDetails.profile_url} className='w-[250px] aspect-square rounded-full'/>
                 <p className='absolute bottom-[15px] right-[10px] p-2 bg-red-500 rounded-full cursor-pointer' onClick={()=>handleLogoDelete()}>
                     <DeleteIcon className='text-white '/>
                 </p>
@@ -139,9 +141,9 @@ const UpdateCompany = () => {
         }
         <div className='grid auto-rows-auto gap-4 w-3/4 grid-cols-2 mb-4'>
             {
-                companyDetailsParams.map((details)=>{
+                employeeDetailsParams.map((details)=>{
                     return (
-                        <InputComponent inputType={details.inputType} labelName={details.labelName} inputName={details.inputName} inputValue={companyDetails[details.inputName]} jsonDetails={companyDetails} setJsonDetails={setCompanyDetails}/>
+                        <InputComponent inputType={details.inputType} labelName={details.labelName} inputName={details.inputName} inputValue={employeeDetails[details.inputName]} jsonDetails={employeeDetails} setJsonDetails={setEmployeeDetails}/>
                     )
                 })
             }
@@ -155,13 +157,13 @@ const UpdateCompany = () => {
             {
                 bankDetailsParams.map((details)=>{
                     return (
-                        <InputComponent inputType={details.inputType} labelName={details.labelName} inputName={details.inputName} inputValue={companyDetails[details.inputName]} jsonDetails={companyDetails} setJsonDetails={setCompanyDetails}/>
+                        <InputComponent inputType={details.inputType} labelName={details.labelName} inputName={details.inputName} inputValue={employeeDetails[details.inputName]} jsonDetails={employeeDetails} setJsonDetails={setEmployeeDetails}/>
                     )
                 })
             }
         </div>
         {
-            companyDetails.logo_url.length == 0 &&
+            employeeDetails.profile_url.length == 0 &&
             <div className='p-4 border border-blue-500 rounded-md mb-4'> 
                 <p className='capitalize font-semibold text-center mb-2 text-blue-700'>upload logo</p>
                 <input 
@@ -180,4 +182,4 @@ const UpdateCompany = () => {
   )
 }
 
-export default UpdateCompany
+export default UpdateEmployee

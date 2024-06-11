@@ -3,9 +3,9 @@ import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom'
 import Loader from '../../components/common/Loader';
 import ButtonComponent from '../../components/common/ButtonComponent';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import EditNoteIcon from '@mui/icons-material/EditNote';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import api from '../../axios';
 
 const AllCompany = () => {
@@ -54,33 +54,36 @@ const AllCompany = () => {
 
   const CompanyCard=({details})=>{
     return(
-      <div className='px-4 py-4 rounded-md border border-gray-500 w-full flex justify-between items-center mb-4 shadow-md'>
-        <div className='flex flex-1 items-center gap-x-2' >
-          <div className='w-[50px] h-[50px] rounded-full'>
-            <img src={details.logo_url} alt="" className='object-cover h-full w-full rounded-full'/>
+      <div className='flex flex-col items-center justify-center w-[300px] border border-gray-200 rounded-md shadow-md px-2 py-2'>
+        <div className='w-[100px] h-[100px] mb-2'>
+                  <img src={details.logo_url} className='w-full h-full rounded-full object-cover'/>
+              </div>
+              <div className='mb-4'>
+                  <p className='text-slate-500 capitalize font-bold text-center'>{details.company_name}</p>
+                  <p className='text-slate-500 text-center font-semibold'>{details.GST_number}</p>
+                  <p className='text-slate-500 text-center'>{details.city} - {details.pincode}</p>
+                  
+              </div>   
+        <div className='flex w-full items-center justify-center gap-x-4 mb-4'>
+          <div 
+              className='bg-green-600 text-white w-[30px] h-[30px] rounded-full flex items-center justify-center cursor-pointer'
+              onClick={()=>handleViewCompany(details._id)}
+          >
+              <RemoveRedEyeIcon/>
           </div>
-          <p>{details.company_name}</p>
-        </div>
-        <div className='flex flex-1 gap-x-2 	'>
-          <ButtonComponent
-            buttonText="View"
-            buttonType="success-btn"
-            onClickCallback={()=>handleViewCompany(details._id)}
-            iconComponent={<VisibilityIcon/>}
-          />
-          <ButtonComponent
-            buttonText="Update"
-            buttonType="update-btn"
-            onClickCallback={()=>handleUpdateCompany(details._id)}
-            iconComponent={<EditNoteIcon/>}
-          />
-          <ButtonComponent
-            buttonText="Delete"
-            buttonType="danger-btn"
-            onClickCallback={()=>handleDeleteCompany(details._id)}
-            iconComponent={<DeleteForeverIcon/>}
-          />
-        </div>
+          <div 
+              className='bg-blue-600 text-white w-[30px] h-[30px] rounded-full flex items-center justify-center cursor-pointer'
+              onClick={()=>handleUpdateCompany(details._id)}
+          >
+              <EditIcon/>
+          </div>
+          <div 
+              className='bg-red-600 text-white w-[30px] h-[30px] rounded-full flex items-center justify-center cursor-pointer'
+              onClick={()=>handleDeleteCompany(details._id)}
+          >
+              <DeleteIcon/>
+          </div>
+            </div>
       </div>
     )
   }
@@ -96,7 +99,7 @@ const AllCompany = () => {
               Create New Company
           </p>
         </div>
-        <div>
+        <div className='flex gap-x-2'>
           {
             allCompany.map((company)=>{
               return(
