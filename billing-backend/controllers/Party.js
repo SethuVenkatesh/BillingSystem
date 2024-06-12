@@ -1,6 +1,7 @@
 const express= require('express')
 var router = express.Router();
 const party = require('../schemas/party')
+const item = require("../schemas/item")
 
 router.post('/new',async (request,response)=>{
     const partyDetails = request.body.partyDetails;
@@ -24,7 +25,27 @@ router.get("/all/:id",async (request,response)=>{
     }
 })
 
+router.get("/all",async (request,response)=>{
+    const partyName = request.query.partyName;
+    try{
+    const allParties=await party.find({is_deleted : false,party_name:{$regex : partyName,$options : "i"}});
+        response.status(200).send(allParties)
+    }catch(e){
+        console.log(e);
+        response.status(400).send("error in retriving parties")
+    }
+})
 
+router.get("/all_items",async (request,response)=>{
+    const {firmId,partyId} = request.query;
+    try{
+        const allItems = await item.find({is_deleted:false,firm:firmId,party:partyId});
+        response.status(200).send(allItems);
+    }catch(e){
+        console.log(e);
+        response.status(400).send("Error in retriving items")
+    }
+})
 router.get("/details/:id",async (request,response)=>{
     try{
         let partyId=request.params.id

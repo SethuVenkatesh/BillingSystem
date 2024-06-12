@@ -38,7 +38,7 @@ const paymentDetailSChema = new mongoose.Schema({
       type:Number,
   },
   CGSTPer: {
-      type:String,
+      type:Number,
   },
   includeGST: {
       type:Boolean,
@@ -49,10 +49,10 @@ const paymentDetailSChema = new mongoose.Schema({
       type:String,
       required:true
   },
-  CSGTPer: {
-      type:Number,
-      required:true
-  },
+  is_paid:{
+    type:Boolean,
+    default:false
+  }
 
 })
 

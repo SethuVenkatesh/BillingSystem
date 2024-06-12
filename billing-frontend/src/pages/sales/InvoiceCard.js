@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState,useMemo } from 'react'
 import Icons from '../../components/common/Icons'
 
 const InvoiceCard = ({invoiceDetails}) => {
@@ -7,17 +7,21 @@ const InvoiceCard = ({invoiceDetails}) => {
     totalQuantity : 0,
   })
 
-  useEffect(()=>{
-
+  const getInvoiceCalc = () =>{
     let allItems = invoiceDetails.payment_details.items;
     let totalQuantity = 0;
     for(let itemIndex = 0 ; itemIndex < allItems.length ;itemIndex++){
       console.log(allItems[itemIndex])
       totalQuantity = totalQuantity + allItems[itemIndex].quantity;
     }
-    setItemDetails({...itemDetails,totalQuantity: totalQuantity});
+    return totalQuantity;
+    // setItemDetails({...itemDetails,totalQuantity: totalQuantity});
+  }
 
-  },[])
+  const getInvoiceSummary = useMemo(()=>getInvoiceCalc(invoiceDetails),[invoiceDetails]);
+  
+
+  
 
   return (
     <div className='border border-gray-300 rounded-sm px-2 py-2 cursor-pointer'>
@@ -46,7 +50,7 @@ const InvoiceCard = ({invoiceDetails}) => {
         </div>
         <div className='flex gap-x-2'>
           <p className='text-slate-500  text-sm'><span className='font-normal'>Total Items: </span>{invoiceDetails.payment_details.items.length}</p>
-          <p className='text-slate-500  text-sm'><span className='font-normal'>Total Quantity: </span>{itemDetails.totalQuantity}</p>
+          <p className='text-slate-500  text-sm'><span className='font-normal'>Total Quantity: </span>{getInvoiceSummary}</p>
         </div>
     </div>
   )

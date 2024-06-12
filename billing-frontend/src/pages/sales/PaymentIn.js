@@ -7,7 +7,7 @@ import InputComponent from '../../components/common/InputComponent'
 import Loader from '../../components/common/Loader'
 import Toaster from '../../components/common/Toaster'
 import SelectComponent from '../../components/common/SelectComponent'
-
+import AutoComplete from '../../components/common/AutoComplete'
 
 const PaymentIn = () => {
 
@@ -44,9 +44,9 @@ const PaymentIn = () => {
     alt_mobile_number:""
   });
 
-  const [allParty,setAllParty] = useState([])
-  
+  const [partyId,setPartyId] = useState("");  
   const [loading,setLoading] = useState(false);
+  const [allPartyItems,setAllPartyItems] = useState([])
   const {firmDetails} = useContext(UserDetailsContext)
 
   
@@ -104,28 +104,64 @@ const PaymentIn = () => {
         api.post("/sales/new_invoice",{invoiceData}).then((res)=>{
             setToastStatus(true);
             setToastMsg("Invoice Added Successfully");
+            setCompanyDetails({  
+            party_name:"",
+            email_id:"",
+            address:"",
+            city:"",
+            state:"",
+            pincode:"",
+            GST_number:"",
+            mobile_number:"",
+            alt_mobile_number:""
+            })
+            setPatymentInDetails({
+                items:[],
+                subTotal:"",
+                totalPrice:"",
+                SGSTPrice:"",
+                CGSTPrice:"",
+                SGSTPer :"",
+                CGSTPer :"",
+                includeGST:false,
+                invoiceDate:maxDate
+            })
+
             setLoading(false);
         }).catch(err=>{
             console.log(err)
             setLoading(false);
+            setToastStatus(false);
+            setToastMsg(err.message)
         })
         console.log("invoiceData",invoiceData)
     }
 
   useEffect(()=>{
-    setLoading(true);
-    api.get(`party/all/${firmDetails._id}`).then(res=>{
-        console.log(res.data)
-        setLoading(false);
-        setAllParty(res.data)
-    }).catch(err=>{
-        console.log(err);
-        setLoading(false);
-    })
+      if(partyId != ""){
+        setLoading(true);
+        api.get(`party/all_items?firmId=${firmDetails._id}&partyId=${partyId}`).then(res=>{
+            setLoading(false);
+            setAllPartyItems(res.data);
+        }).catch(err=>{
+            console.log(err);
+            setLoading(false);
+        })
+    }
+  },[partyId]) 
 
-  },[]) 
+
+
+  const getParties = async (query) =>{
+    try{
+        const response =await api.get('party/all'+`?partyName=${query}`)
+        return response.data;
+    }catch(err){
+        return err;
+    }
+  }
   
- 
+  console.log("party",allPartyItems)
   return (
     <>
         {
@@ -137,8 +173,20 @@ const PaymentIn = () => {
                     </div>
                     <div className='border-gray-300 border-b mb-4'>
                         <p className='text-slate-500 mb-4 capitalize font-semibold text-md'>Party Details</p>
-                        <div className='grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-x-4'>                         
-                            <InputComponent inputType="text" labelName="Party Name" inputName="party_name" inputValue={companyDetails.party_name} jsonDetails={companyDetails} setJsonDetails={setCompanyDetails}/>                        
+                        <div className='grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-x-4'>   
+                            <AutoComplete
+                                placeholder={"Party Name"}
+                                customLoading = {<>Loading...</>}
+                                onSelect = {(res) => 
+                                    {
+                                        setPartyId(res._id)
+                                        setCompanyDetails({...companyDetails,party_name:res.party_name,email_id:res.email_id,address:res.address,city:res.city,mobile_number:res.mobile_number,pincode:res.pincode,alt_mobile_number:res.alt_mobile_number,GST_number:res.GST_number,state:res.state})
+                                    }
+                                }
+                                fetchSuggestions ={getParties}
+                                dataKey ="party_name"
+                                
+                            />                      
                             <InputComponent inputType="text" labelName="Email Id" inputName="email_id" inputValue={companyDetails.email_id} jsonDetails={companyDetails} setJsonDetails={setCompanyDetails}/>                        
                             <InputComponent inputType="text" labelName="Address" inputName="address" inputValue={companyDetails.address} jsonDetails={companyDetails} setJsonDetails={setCompanyDetails}/>                        
                             <InputComponent inputType="text" labelName="City" inputName="city" inputValue={companyDetails.city} jsonDetails={companyDetails} setJsonDetails={setCompanyDetails}/>                        
@@ -159,7 +207,7 @@ const PaymentIn = () => {
                                 {
                                     addedItems.map((itemDetails,index)=>{
                                         return(
-                                            <ItemComponent itemDetails={itemDetails} itemIndex={index} setAddedItems={setAddedItems} allItems={addedItems} setToastStatus={setToastStatus} setToastMsg={setToastMsg}/>
+                                            <ItemComponent itemDetails={itemDetails} itemIndex={index} setAddedItems={setAddedItems} allItems={addedItems} setToastStatus={setToastStatus} setToastMsg={setToastMsg} allPartyItems={allPartyItems}/>
                                         )
                                     })
                                 }
@@ -248,7 +296,7 @@ const PaymentIn = () => {
   )
 }
 
-const ItemComponent = ({itemDetails,itemIndex,setAddedItems,allItems,setToastStatus,setToastMsg }) => {
+const ItemComponent = ({itemDetails,itemIndex,setAddedItems,allItems,setToastStatus,setToastMsg,allPartyItems }) => {
 
     const [itemData,setItemData] = useState({})
 
@@ -284,10 +332,20 @@ const ItemComponent = ({itemDetails,itemIndex,setAddedItems,allItems,setToastSta
 
     return (
         <div className='flex gap-x-2 '>
-            <div className='relative mb-4'>
-                <input type='text' id="floating_outlined" class="block px-2 pb-2 pt-2 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " onChange={(e)=>handleItemChange(e)} name="item_name" value={itemData.item_name}/>
-                <label for="floating_outlined" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2  peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1 pointer-events-none capitalize">Item Name</label>
-            </div>
+            <AutoComplete
+                placeholder={"Item Name"}
+                customLoading = {<>Loading...</>}
+                onSelect = {(res) => 
+                    {
+                        setItemData({...itemData,item_name:res.item_name,price:res.price})
+                        const allItemsModified = [...allItems];
+                        allItemsModified[itemIndex] = {...allItemsModified[itemIndex],item_name:res.item_name,price:res.price};
+                        setAddedItems(allItemsModified);  
+                    }
+                }
+                staticData={allPartyItems}
+                dataKey ="item_name"          
+            />  
             <div className='relative mb-4'>
                 <input type='number' id="floating_outlined" class="block px-2 pb-2 pt-2 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " onChange={(e)=>handleItemChange(e)} name="price" value={itemData.price}/>
                 <label for="floating_outlined" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2  peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1 pointer-events-none capitalize">Price</label>
