@@ -1,12 +1,17 @@
 const express=require('express')
 var router = express.Router();
 const user = require('../schemas/user');
+const firm = require('../schemas/firm')
 const { sendMail } = require('../helper/SendMail');
 const authToken = require('../schemas/authToken');
 
 router.post('/new',async (request,response)=>{
     const userDetails = request.body.userDetails;
      try{
+        let firmDetails = {}
+        const firmData = await firm.create(firmDetails);
+        console.log("firm",firmData);
+        userDetails["firm"] = firmData._id;
         const userData = await user.create(userDetails);
         response.status(200).send("user created successfully")
     }catch(e){
@@ -17,7 +22,8 @@ router.post('/new',async (request,response)=>{
 
 router.post('/login',async (request,response)=>{
     try{
-        const userDetails = request.body.userCredentials;
+        console.log("login",request.body)
+        const userDetails = request.body;
         const userData=await user.findOne({username:userDetails.username,password:userDetails.password}).select('-password');
         if(userData){
             response.status(200).json({isLoggedIn:true, msg:"Login Successfully.", userData:userData,status:true});
@@ -31,17 +37,23 @@ router.post('/login',async (request,response)=>{
     
 })
 
-router.get('/isExist',async (request,response)=>{
+router.post('/isExist',async (request,response)=>{
     try{
-        let email = request.query.email;
+        console.log(request.body);
+        let {email,username} = request.body;
         let emailFound = false;
-        let userData =await user.findOne({email:email});
-        if(userData){
+        let userNameFound = false;
+        let emailData =await user.findOne({email:email});
+        let userData = await user.findOne({username:username})
+        if(emailData){
             emailFound = true;
         }
-        response.status(200).json({emailFound:emailFound});
+        if(userData){
+            userNameFound = true
+        }
+        response.status(200).json({emailFound:emailFound,userNameFound:userNameFound});
     }catch(e){
-
+        response.status(400).json({errorMessage:"Something went wrong"});
     }
 })
 

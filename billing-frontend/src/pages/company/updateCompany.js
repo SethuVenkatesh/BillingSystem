@@ -141,7 +141,7 @@ const UpdateCompany = () => {
             {
                 companyDetailsParams.map((details)=>{
                     return (
-                        <InputComponent inputType={details.inputType} labelName={details.labelName} inputName={details.inputName} inputValue={companyDetails[details.inputName]} companyDetails={companyDetails} setCompanyDetails={setCompanyDetails}/>
+                        <InputComponent inputType={details.inputType} labelName={details.labelName} inputName={details.inputName} inputValue={companyDetails[details.inputName]} jsonDetails={companyDetails} setJsonDetails={setCompanyDetails}/>
                     )
                 })
             }
@@ -155,7 +155,7 @@ const UpdateCompany = () => {
             {
                 bankDetailsParams.map((details)=>{
                     return (
-                        <InputComponent inputType={details.inputType} labelName={details.labelName} inputName={details.inputName} inputValue={companyDetails[details.inputName]} companyDetails={companyDetails} setCompanyDetails={setCompanyDetails}/>
+                        <InputComponent inputType={details.inputType} labelName={details.labelName} inputName={details.inputName} inputValue={companyDetails[details.inputName]} jsonDetails={companyDetails} setJsonDetails={setCompanyDetails}/>
                     )
                 })
             }

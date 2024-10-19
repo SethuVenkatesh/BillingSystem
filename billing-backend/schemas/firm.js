@@ -1,57 +1,66 @@
 const mongoose = require("mongoose");
 
-const companySchema = new mongoose.Schema({
-  company_name: {
+const firmSchema = new mongoose.Schema({
+  firm_name: {
     type: String,
     required:true,
+    default:"My Company"
+  },
+  default_logo_url:{
+    type:String,
+    default:"https://res.cloudinary.com/dkjcfh7oj/image/upload/v1713684716/firms/building_1_jc8pct.png"
   },
   logo_url:{
     type:String,
-    required:true,
+    default:"",
+  },
+  email_id:{
+    type:String,
+    default:"",
   },
   address:{
     type:String,
-    required:true,
+    default:"",
   },
   city:{
     type:String,
-    required:true,
+    default:"",
   },
   state:{
     type:String,
-    required:true,
+    default:"",
   },
   pincode:{
     type:Number,
-    required:true,
+    default:"",
   },
   mobile_number:{
     type:Number,
-    required:true,
+    default:"",
   },
   alt_mobile_number:{
     type:Number,
-    required:true,
+    default:"",
   },
   GST_number: {
-    type: String,  
-    required:true,  
+    type: String, 
+    default:"", 
   },
   bank_name:{
     type:String,
-    required:true,
+    default:"",
   },
   bank_branch:{
     type:String,
-    required:true,
+    default:"",
   },
   account_number:{
     type:Number,
-    required:true,
+    default:"",
   },
   IFSC_code:{
     type:String,
-    required:true,
+    default:"",
   },
   is_deleted:{
     type:Boolean,
@@ -62,6 +71,6 @@ const companySchema = new mongoose.Schema({
   timestamps:true
 });
 
-const company = mongoose.model("company", companySchema);
+const firm = mongoose.model("firm", firmSchema);
 
-module.exports = company;
+module.exports = firm;

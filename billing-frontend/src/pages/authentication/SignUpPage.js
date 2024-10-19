@@ -42,26 +42,67 @@ const SignUpPage = () => {
 
   const handleImageUpload = () => {
     setLoading(true)
-    let isSucess = handleValidate();
-    if(isSucess){
-    const formData = new FormData ();
-    formData.append("file", uploadFile);
-    formData.append("upload_preset", "ruwqs5az");
-    axios.post(
-     "https://api.cloudinary.com/v1_1/dkjcfh7oj/image/upload",
-     formData
-   )
-    .then((response) => {
-      let userDetails={...userData,profile_url:response.data.secure_url}
-      setUserData({...userData,profile_url:response.data.secure_url})
-      createNewAccount(userDetails)
-    })
-    .catch((error) => {
-      console.log(error);
-      setLoading(false);
-    });
+    let isSuccess = handleValidate();
+    console.log("isSuccess",isSuccess)
+    if(isSuccess){
+      handleUserExsist(userData.email,userData.username)
     }
   };
+
+  const handleUserExsist =(email,username) =>{
+    api.post('/user/isExist',{email,username}).then((res) => {
+      if(res.data.emailFound){
+        setSuccesNotification(false);
+        setLoading(false);
+        setToastMsg("Email already Exists. Use another email");
+        return;
+      }
+      else if(res.data.userNameFound){
+        setSuccesNotification(false);
+        setLoading(false);
+        setToastMsg("Username already Exists. Use another username");
+        return;
+      }
+      else{
+          console.log("first",uploadFile)
+          if(uploadFile){
+            const formData = new FormData ();
+            formData.append("file", uploadFile);
+            formData.append("upload_preset", "ruwqs5az");
+            formData.append("folder","users");
+            axios.post(
+             "https://api.cloudinary.com/v1_1/dkjcfh7oj/image/upload",
+             formData
+            ).then((response) => {
+              let userDetails={...userData,profile_url:response.data.secure_url}
+              setUserData({...userData,profile_url:response.data.secure_url})
+              api.post('/user/new',{userDetails}).then((req,res)=>{
+                console.log(res)
+                setSuccesNotification(true);
+                setToastMsg("User Created Successfully")
+                const myTimeout = setTimeout(()=>{
+                  navigate('/')
+                }  
+                , 5000);
+                setLoading(false)
+              }).catch(e=>{ 
+                setLoading(false)
+                 setToastMsg("Error in Creating User");
+                 setSuccesNotification(false);
+                 console.log(e)
+              }
+              )
+            })
+            .catch((error) => {
+              console.log(error);
+                 setToastMsg("Error in Uploading Image");
+                setSuccesNotification(false);
+              setLoading(false);
+            });
+          }
+      }
+    });
+  }
 
   const handleValidate = () =>{
     let userValidation = userData
@@ -109,25 +150,9 @@ const SignUpPage = () => {
       setToastMsg("Profile picture is required");
       return false;
     }
-
-    api.get(`/user/isExist?email=${userValidation.email}`).then((res) => {
-      if(res.data.emailFound){
-        setSuccesNotification(false);
-        setLoading(false);
-        setToastMsg("Email already Exists. Use another email");
-        return;
-      }
-    });
     return true;
   }
 
-  const createNewAccount = (userDetails) => {
-    // call create user api
-    api.post('/user/new',{userDetails}).then((req,res)=>{
-      console.log(res)
-      setLoading(false)
-    }).catch(e=>console.log("error"))
-  }
 
   const handleInputChange = (e) => {
     setUserData({...userData, [e.target.name]:e.target.value})
