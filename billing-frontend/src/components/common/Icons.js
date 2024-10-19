@@ -19,6 +19,8 @@ import SellIcon from '@mui/icons-material/Sell';
 import CalculateIcon from '@mui/icons-material/Calculate';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
+import PaidIcon from '@mui/icons-material/Paid';
+
 const Icons = {
     "arrow-right-icon":<ChevronRightIcon/>,
     "arrow-up-icon":<KeyboardArrowUpIcon/>,
@@ -40,7 +42,9 @@ const Icons = {
     "item-icon":<SellIcon/>,
     "calculate-icon":<CalculateIcon/>,
     "receipt-icon":<ReceiptLongIcon/>,
-    "phone-icon":<LocalPhoneIcon/>
+    "phone-icon":<LocalPhoneIcon/>,
+    "payment-icon":<PaidIcon/>
+
 }
 
 export default Icons;

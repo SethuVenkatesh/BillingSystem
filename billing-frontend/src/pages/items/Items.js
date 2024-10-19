@@ -223,7 +223,7 @@ const ItemsPopUp = ({isNewParty,itemDetails,getAllPartyItems,onCloseFn}) =>{
 
   return (
     <div className='flex flex-col w-full'>
-        <div className='flex flex-col w-full'>
+        <div className='flex flex-col w-full gap-y-4'>
             <InputComponent inputType="text" labelName="Item Name" inputName="item_name" inputValue={itemData.item_name} jsonDetails={itemData} setJsonDetails={setItemData}/>
             <InputComponent inputType="number" labelName="price" inputName="price" inputValue={itemData.price} jsonDetails={itemData} setJsonDetails={setItemData}/>
             <select className='w-full border border-gray-300 py-2 px-2 text-md rounded-md focus:outline-none focus:border-blue-500 text-sm text-gray-500 mb-4' value={isNewParty ? itemData.party :itemData.party._id} name='party' onChange={(e)=>handleInputChange(e)}>

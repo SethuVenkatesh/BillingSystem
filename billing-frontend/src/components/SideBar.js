@@ -304,7 +304,7 @@ const EditFirmComponent = ({}) =>{
                         </div>
                     }
                 </div>
-                <div className='flex flex-col '>
+                <div className='flex flex-col gap-y-4'>
                     <InputComponent inputType="text" labelName="Firm Name" inputName="firm_name" inputValue={firmData.firm_name} jsonDetails={firmData} setJsonDetails={setFirmData}/>
                     <InputComponent inputType="text" labelName="GSTIN" inputName="GST_number" inputValue={firmData.GST_number} jsonDetails={firmData} setJsonDetails={setFirmData}/>
                     <InputComponent inputType="text" labelName="mobile number" inputName="mobile_number" inputValue={firmData.mobile_number} jsonDetails={firmData} setJsonDetails={setFirmData}/>                        
@@ -320,13 +320,13 @@ const EditFirmComponent = ({}) =>{
                 <div className='p-4 w-1/2 h-[200px]'>
                     {
                         selectedTab == 1 ? 
-                        <div className=''>
+                        <div className='flex flex-col gap-y-4'>
                             <InputComponent inputType="text" labelName="Address" inputName="address" inputValue={firmData.address} jsonDetails={firmData} setJsonDetails={setFirmData}/>
                             <InputComponent inputType="text" labelName="City" inputName="city" inputValue={firmData.city} jsonDetails={firmData} setJsonDetails={setFirmData}/>
                             <InputComponent inputType="number" labelName="pincode" inputName="pincode" inputValue={firmData.pincode} jsonDetails={firmData} setJsonDetails={setFirmData}/>
                             <SelectComponent labelName="state" inputName="state" inputValue={firmData.state} inputArray={stateNames} jsonDetails={firmData} setJsonDetails={setFirmData}/>
                         </div> : 
-                        <div className=''>
+                        <div className='flex flex-col gap-y-4'>
                             <InputComponent inputType="text" labelName="Bank Name" inputName="bank_name" inputValue={firmData.bank_name} jsonDetails={firmData} setJsonDetails={setFirmData}/>
                             <InputComponent inputType="text" labelName="Branch Name" inputName="bank_branch" inputValue={firmData.bank_branch} jsonDetails={firmData} setJsonDetails={setFirmData}/>
                             <InputComponent inputType="number" labelName="Account Number" inputName="account_number" inputValue={firmData.account_number} jsonDetails={firmData} setJsonDetails={setFirmData}/>

@@ -8,10 +8,12 @@ import Loader from '../../components/common/Loader'
 import Toaster from '../../components/common/Toaster'
 import SelectComponent from '../../components/common/SelectComponent'
 import AutoComplete from '../../components/common/AutoComplete'
+import { useLocation,useNavigate } from 'react-router-dom'
 
-const PaymentIn = () => {
 
-    let today = new Date();
+
+const EditInvoice = () => { 
+let today = new Date();
     let maxDate = today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2) + '-' + ('0' + today.getDate()).slice(-2);
   const [paymentInDetails,setPatymentInDetails]  = useState({
     items:[],
@@ -73,7 +75,7 @@ const PaymentIn = () => {
             setToastStatus(false);
             return;
         }
-        if(lastItem.quantity.trim() == ""){
+        if(lastItem.quantity.toString().trim() == ""){
             setToastMsg("Quantity Cannot be empty");
             setToastStatus(false);
             return;
@@ -101,6 +103,7 @@ const PaymentIn = () => {
     }
     const handleCheckOut = () =>{
 
+        let {invoiceDetail} = state;
         if(paymentInDetails.items.length == 0){
             setToastStatus(false);
             setToastMsg("Calculate the Bill and then Checkout")
@@ -112,9 +115,9 @@ const PaymentIn = () => {
             firm:firmDetails._id
         }
         setLoading(true);
-        api.post("/sales/new_invoice",{invoiceData}).then((res)=>{
+        api.put("/sales/edit_invoice?invoice_id="+invoiceDetail._id,{invoiceData}).then((res)=>{
             setToastStatus(true);
-            setToastMsg("Invoice Added Successfully");
+            setToastMsg("Invoice Updated Successfully");
             setPartyName("")
             setCompanyDetails({  
             party_name:"",
@@ -147,8 +150,20 @@ const PaymentIn = () => {
             setToastStatus(false);
             setToastMsg(err.message)
         })
-        console.log("invoiceData",invoiceData)
     }
+
+
+    const {state} = useLocation();
+    
+    useEffect(()=>{
+        let {invoiceDetail} = state;
+        
+        setPatymentInDetails(invoiceDetail.payment_details)
+        setCompanyDetails(invoiceDetail.party)
+        setPartyName(invoiceDetail.party.party_name)
+        setAddedItems(invoiceDetail.payment_details.items)
+
+    },[])
 
   useEffect(()=>{
       if(partyId != ""){
@@ -235,12 +250,12 @@ const PaymentIn = () => {
                                 </div>
                                 {
                                     showGST && 
-                                    <div className='flex gap-x-2'>
+                                    <div className='flex gap-x-2 gap-y-4'>
                                         <InputComponent inputType="number" labelName="CSGT" inputName="CGST" inputValue={GSTDetails.CGST} jsonDetails={GSTDetails} setJsonDetails={setGSTDetails}/>                        
                                         <InputComponent inputType="number" labelName="SGST" inputName="SGST" inputValue={GSTDetails.SGST} jsonDetails={GSTDetails} setJsonDetails={setGSTDetails}/>                        
                                     </div>
                                 }
-                                <div className='flex gap-x-2'>
+                                <div className='flex gap-x-2 gap-y-4'>
                                     <p className='px-2 py-1 shadow-md font-semibold w-fit select-none cursor-pointer rounded-md   bg-blue-200 text-blue-500 mb-2 left' onClick={()=>addNewItems()}>{Icons['add-icon']} Add Items</p>
                                     <p className='px-2 py-1 shadow-md text-white font-semibold w-fit select-none cursor-pointer rounded-md   bg-green-300 text-green-600 mb-2 left' onClick={()=>calculateBill()}>{Icons['calculate-icon']} Calculate</p>
                                 </div>
@@ -279,7 +294,7 @@ const PaymentIn = () => {
                                                 </div>
                                                 <div className='grid grid-cols-4 mb-2'>
                                                     <p className='font-semibold text-slate-500 col-span-2'></p>
-                                                    <p className='font-semibold text-slate-500'>CGST Price ({   tInDetails.CGSTPer})%</p>
+                                                    <p className='font-semibold text-slate-500'>CGST Price ({paymentInDetails.CGSTPer})%</p>
                                                     <p className='font-semibold text-slate-500'>{paymentInDetails.CGSTPrice}</p>
                                                 </div>
                                                 <div className='grid grid-cols-4 mb-2'>
@@ -327,11 +342,8 @@ const ItemComponent = ({itemDetails,itemIndex,setAddedItems,allItems,setToastSta
         }
         let allItemsModified = [...allItems];
         allItemsModified = allItemsModified.filter((_, i) => i !== itemIndex);
-        console.log("all",allItemsModified)
         setAddedItems(allItemsModified);
-
     }
-
     
     const handleItemChange = (e) =>{
         console.log(e.target.name,e.target.value)
@@ -394,4 +406,6 @@ const ItemComponent = ({itemDetails,itemIndex,setAddedItems,allItems,setToastSta
     )
 }
 
-export default PaymentIn
+
+
+export default EditInvoice

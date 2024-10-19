@@ -14,10 +14,6 @@ import NotFound from './pages/NotFound';
 
 import { useContext } from 'react';
 import { UserDetailsContext } from './context/userContext';
-import NewEmployee from './pages/employee/NewEmployee';
-import AllEmployee from './pages/employee/AllEmployee';
-import ViewEmployee from './pages/employee/ViewEmployee';
-import UpdateEmployee from './pages/employee/UpdateEmployee';
 import BillingHome from './pages/billing/BillingHome';
 
 import Dashboard from './pages/dashboard/Dashboard';

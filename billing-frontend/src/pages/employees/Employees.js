@@ -378,7 +378,7 @@ const EmployeePopUp = ({isNewEmployee,employeeDetails,getAllEmployees,onCloseFn 
                     </div>
                 }
             </div>
-            <div className='flex flex-col '>
+            <div className='flex flex-col gap-y-4'>
                 <InputComponent inputType="text" labelName="Employee Name" inputName="employee_name" inputValue={employeeData.employee_name} jsonDetails={employeeData} setJsonDetails={setEmployeeData}/>
                 <InputComponent inputType="date" labelName="Date of Birth" inputName="date_of_birth" inputValue={employeeData.date_of_birth} jsonDetails={employeeData} setJsonDetails={setEmployeeData} maxValue={maxDate}/>
                 <SelectComponent labelName="gender" inputName="gender" inputValue={employeeData.gender} inputArray={genderNames} jsonDetails={employeeData} setJsonDetails={setEmployeeData}/>
@@ -395,13 +395,13 @@ const EmployeePopUp = ({isNewEmployee,employeeDetails,getAllEmployees,onCloseFn 
             <div className='p-4 w-1/2 h-[200px]'>
                 {
                     selectedTab == 1 ? 
-                    <div className=''>
+                    <div className='flex flex-col gap-y-4'>
                         <InputComponent inputType="text" labelName="Address" inputName="address" inputValue={employeeData.address} jsonDetails={employeeData} setJsonDetails={setEmployeeData}/>
                         <InputComponent inputType="text" labelName="City" inputName="city" inputValue={employeeData.city} jsonDetails={employeeData} setJsonDetails={setEmployeeData}/>
                         <InputComponent inputType="number" labelName="pincode" inputName="pincode" inputValue={employeeData.pincode} jsonDetails={employeeData} setJsonDetails={setEmployeeData}/>
                         <SelectComponent labelName="state" inputName="state" inputValue={employeeData.state} inputArray={stateNames} jsonDetails={employeeData} setJsonDetails={setEmployeeData}/>
                     </div> : 
-                    <div className=''>
+                    <div className='flex flex-col gap-y-4'>
                         <InputComponent inputType="text" labelName="Bank Name" inputName="bank_name" inputValue={employeeData.bank_name} jsonDetails={employeeData} setJsonDetails={setEmployeeData}/>
                         <InputComponent inputType="text" labelName="Branch Name" inputName="bank_branch" inputValue={employeeData.bank_branch} jsonDetails={employeeData} setJsonDetails={setEmployeeData}/>
                         <InputComponent inputType="number" labelName="Account Number" inputName="account_number" inputValue={employeeData.account_number} jsonDetails={employeeData} setJsonDetails={setEmployeeData}/>

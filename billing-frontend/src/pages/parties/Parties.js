@@ -386,7 +386,7 @@ const PartyPopUp = ({isNewParty,partyDetails,getAllParties,setShowPopUp}) =>{
                   </div>
               }
           </div>
-          <div className='flex flex-col '>
+          <div className='flex flex-col gap-y-4'>
               <InputComponent inputType="text" labelName="Party Name" inputName="party_name" inputValue={partyData.party_name} jsonDetails={partyData} setJsonDetails={setPartyData}/>
               <InputComponent inputType="text" labelName="GST Number" inputName="GST_number" inputValue={partyData.GST_number} jsonDetails={partyData} setJsonDetails={setPartyData}/>
               <InputComponent inputType="text" labelName="mobile number" inputName="mobile_number" inputValue={partyData.mobile_number} jsonDetails={partyData} setJsonDetails={setPartyData}/>                        
@@ -402,13 +402,13 @@ const PartyPopUp = ({isNewParty,partyDetails,getAllParties,setShowPopUp}) =>{
           <div className='p-4 w-1/2 h-[200px]'>
               {
                   selectedTab == 1 ? 
-                  <div className=''>
+                  <div className='flex flex-col gap-y-4'>
                       <InputComponent inputType="text" labelName="Address" inputName="address" inputValue={partyData.address} jsonDetails={partyData} setJsonDetails={setPartyData}/>
                       <InputComponent inputType="text" labelName="City" inputName="city" inputValue={partyData.city} jsonDetails={partyData} setJsonDetails={setPartyData}/>
                       <InputComponent inputType="number" labelName="pincode" inputName="pincode" inputValue={partyData.pincode} jsonDetails={partyData} setJsonDetails={setPartyData}/>
                       <SelectComponent labelName="state" inputName="state" inputValue={partyData.state} inputArray={stateNames} jsonDetails={partyData} setJsonDetails={setPartyData}/>
                   </div> : 
-                  <div className=''>
+                  <div className='flex flex-col gap-y-4'>
                       <InputComponent inputType="text" labelName="Bank Name" inputName="bank_name" inputValue={partyData.bank_name} jsonDetails={partyData} setJsonDetails={setPartyData}/>
                       <InputComponent inputType="text" labelName="Branch Name" inputName="bank_branch" inputValue={partyData.bank_branch} jsonDetails={partyData} setJsonDetails={setPartyData}/>
                       <InputComponent inputType="number" labelName="Account Number" inputName="account_number" inputValue={partyData.account_number} jsonDetails={partyData} setJsonDetails={setPartyData}/>

@@ -52,6 +52,10 @@ const paymentDetailSChema = new mongoose.Schema({
   is_paid:{
     type:Boolean,
     default:false
+  },
+  is_deleted:{
+    type:Boolean,
+    default:false
   }
 
 })
@@ -111,7 +115,12 @@ const SalesInvoiceSchema = new mongoose.Schema({
   is_deleted:{
     type:Boolean,
     default:false
+  },
+  payment:{
+    type:String,
+    default:''
   }
+
 },
 {
   timestamps:true
@@ -121,5 +130,5 @@ SalesInvoiceSchema.plugin(AutoIncrement, {start_seq: 1, inc_field: 'invoice_no' 
 
 
 const salesInvoice = mongoose.model("sales_invoice", SalesInvoiceSchema);
-
+  
 module.exports = salesInvoice;

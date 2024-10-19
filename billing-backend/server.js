@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors=require('cors')
 const dotenv = require("dotenv")
-const resetCounter = require("./schemas/ResetCounter")
+const MyModel = require("./schemas/salesInvoice")
 //initialzing app
 const app=express()
 dotenv.config()
@@ -13,8 +13,43 @@ mongoose.connect(process.env.mongoUrl,{useNewUrlParser: true,useUnifiedTopology:
 .then(async ()=>{
     // await resetCounter()
     console.log("mongodb connected")
+
 })
 .catch((err)=>{console.log("err:",err)});
+
+
+
+const updateDocuments = async () => {
+    try {
+        await mongoose.connect(process.env.mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+        console.log('Connected to MongoDB');
+
+        // Log the documents before the update
+        const beforeUpdate = await MyModel.find({});
+        console.log('Documents before update:', beforeUpdate);
+
+
+        const result = await MyModel.updateMany(
+            {}, // Filter to select all documents
+            { $set: { payment: '' } } // Add new field with default value
+        );
+        
+        console.log(result);
+
+        // Log the documents after the update
+        const afterUpdate = await MyModel.find({});
+        console.log('Documents after update:', afterUpdate);
+
+
+    } catch (err) {
+        console.error('Error updating documents:', err);
+    } finally {
+        // Close the connection after the operation
+        await mongoose.connection.close();
+    }
+};
+
+// updateDocuments();
 
 // Controllers
 const User = require("./controllers/User")
@@ -38,4 +73,5 @@ app.use("/sales",Sales)
 app.listen(process.env.port,(req,res)=>{
     console.log(`Listening on port ${process.env.port}`)
 })
+
 
